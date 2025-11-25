@@ -1,73 +1,72 @@
+// src/store/auth.ts
 import { defineStore } from "pinia";
-
-export interface AuthResponse {
-  usuarioId: number;
-  nombre: string;
-  email: string;
-  rol: "User" | "Admin";
-  token: string;
-  expiresAt: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload {
-  nombre: string;
-  email: string;
-  password: string;
-}
+import { apiSend } from "../services/api";
+import type {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+} from "../types/agora";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     usuarioId: null as number | null,
     nombre: "" as string,
     email: "" as string,
-    rol: "" as "User" | "Admin" | "",
+    rol: "" as string, // "Admin" | "User" | ""
     token: "" as string,
     expiresAt: "" as string,
   }),
 
   getters: {
-    isLoggedIn: (state) => !!state.token,
+    isAuthenticated: (state) => !!state.token,
     isAdmin: (state) => state.rol === "Admin",
-    bearerHeader: (state) =>
-      state.token ? { Authorization: `Bearer ${state.token}` } : {},
   },
 
   actions: {
-    async login(payload: LoginPayload) {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    cargarDesdeLocalStorage() {
+      const token = localStorage.getItem("agora_token");
+      const rol = localStorage.getItem("agora_rol");
+      const nombre = localStorage.getItem("agora_nombre");
+      const email = localStorage.getItem("agora_email");
+      const usuarioId = localStorage.getItem("agora_usuarioId");
+      const expiresAt = localStorage.getItem("agora_expiresAt");
 
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error("Error al iniciar sesión: " + errText);
-      }
-
-      const data: AuthResponse = await res.json();
-      this._applyAuthResponse(data);
+      if (token) this.token = token;
+      if (rol) this.rol = rol;
+      if (nombre) this.nombre = nombre;
+      if (email) this.email = email;
+      if (usuarioId) this.usuarioId = Number(usuarioId);
+      if (expiresAt) this.expiresAt = expiresAt;
     },
 
-    async register(payload: RegisterPayload) {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    async login(payload: LoginRequest) {
+      const data = await apiSend<AuthResponse>("/auth/login", "POST", payload);
+      this._guardarSesion(data);
+    },
 
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error("Error al registrarse: " + errText);
-      }
+    async register(payload: RegisterRequest) {
+      const data = await apiSend<AuthResponse>(
+        "/auth/register",
+        "POST",
+        payload
+      );
+      this._guardarSesion(data);
+    },
 
-      const data: AuthResponse = await res.json();
-      this._applyAuthResponse(data);
+    _guardarSesion(data: AuthResponse) {
+      this.usuarioId = data.usuarioId;
+      this.nombre = data.nombre;
+      this.email = data.email;
+      this.rol = data.rol;
+      this.token = data.token;
+      this.expiresAt = data.expiresAt;
+
+      localStorage.setItem("agora_token", data.token);
+      localStorage.setItem("agora_rol", data.rol);
+      localStorage.setItem("agora_nombre", data.nombre);
+      localStorage.setItem("agora_email", data.email);
+      localStorage.setItem("agora_usuarioId", String(data.usuarioId));
+      localStorage.setItem("agora_expiresAt", String(data.expiresAt));
     },
 
     logout() {
@@ -77,15 +76,13 @@ export const useAuthStore = defineStore("auth", {
       this.rol = "";
       this.token = "";
       this.expiresAt = "";
-    },
 
-    _applyAuthResponse(data: AuthResponse) {
-      this.usuarioId = data.usuarioId;
-      this.nombre = data.nombre;
-      this.email = data.email;
-      this.rol = data.rol;
-      this.token = data.token;
-      this.expiresAt = data.expiresAt;
+      localStorage.removeItem("agora_token");
+      localStorage.removeItem("agora_rol");
+      localStorage.removeItem("agora_nombre");
+      localStorage.removeItem("agora_email");
+      localStorage.removeItem("agora_usuarioId");
+      localStorage.removeItem("agora_expiresAt");
     },
   },
 });

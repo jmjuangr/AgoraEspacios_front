@@ -1,0 +1,206 @@
+@import './_variables.scss';
+
+// Mixin genérico de elevación
+@mixin ag-elevation($shadow: $shadow-soft, $border-color: $color-border) {
+  box-shadow: $shadow;
+  border: 1px solid $border-color;
+}
+
+// Mixin de tarjeta principal (para v-card o div.ag-card)
+@mixin ag-card($padding: $spacing-5) {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.92),
+    rgba(15, 23, 42, 0.98)
+  );
+  border-radius: $radius-lg;
+  padding: $padding;
+  @include ag-elevation($shadow-soft-sm, rgba(30, 64, 175, 0.8));
+
+  color: $color-text;
+}
+
+// Mixin de sección de página (para contenedores grandes)
+@mixin ag-section($gap: $spacing-6) {
+  margin-bottom: $spacing-8;
+  padding: $spacing-5;
+  border-radius: $radius-lg;
+  background: radial-gradient(
+    circle at top left,
+    rgba(37, 99, 235, 0.18),
+    rgba(15, 23, 42, 0.98)
+  );
+  @include ag-elevation($shadow-soft-sm, rgba(30, 64, 175, 0.55));
+  
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+// Mixin para el header de tarjeta/sección
+@mixin ag-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-3;
+  margin-bottom: $spacing-3;
+
+  .title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: $color-heading;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
+}
+
+// Mixin de botón primario (usable en .ag-btn-primary)
+@mixin ag-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $radius-pill;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, $color-primary, $color-primary-strong);
+  color: #f9fafb;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition:
+    transform $transition-fast,
+    box-shadow $transition-fast,
+    background $transition-fast;
+
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.7);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+// Mixin de botón secundario (contorno moderno)
+@mixin ag-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $radius-pill;
+  cursor: pointer;
+  background: transparent;
+  color: $color-text;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  font-size: 0.9rem;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast;
+
+  &:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+    color: $color-heading;
+    border-color: rgba(148, 163, 184, 0.85);
+  }
+}
+
+// Mixin de badge/etiqueta (estado o categoría)
+@mixin ag-badge($bg: rgba(37, 99, 235, 0.18), $color: $color-primary-soft) {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: $radius-pill;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: $bg;
+  color: $color;
+
+  &.success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: $color-success;
+  }
+
+  &.warning {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: $color-warning;
+  }
+
+  &.error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: $color-error;
+  }
+}
+
+// Mixin para inputs (puede usarse en contenedores alrededor de v-text-field si estilamos envoltorios).
+@mixin ag-input-shell {
+  border-radius: $radius-md;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background-color: rgba(15, 23, 42, 0.85);
+  padding: $spacing-2 $spacing-3;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    background-color $transition-fast;
+
+  &:focus-within {
+    border-color: rgba(37, 99, 235, 0.8);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.8);
+    background-color: rgba(15, 23, 42, 0.98);
+  }
+}
+
+// Mixin para layout de calendario/reservas (contenedores más amplios)
+@mixin ag-calendar-container {
+  @include ag-section($spacing-4);
+  padding: $spacing-4;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+// Utilidad para texto monoespaciado (por ejemplo, IDs de reserva)
+@mixin ag-code-text {
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+// Mixin específico para formularios de autenticación (login / register)
+@mixin ag-auth-fields {
+ 
+  ::v-deep(.v-field) {
+    background-color: $color-background-soft; 
+    border-radius: $radius-md;
+  }
+
+  ::v-deep(.v-field--variant-outlined .v-field__outline) {
+    --v-border-opacity: 0.45;
+    color: $color-border;
+  }
+
+  ::v-deep(.v-label) {
+    color: $color-text-muted;
+  }
+
+  ::v-deep(.v-field input) {
+    color: $color-heading;
+  }
+
+  ::v-deep(.v-messages__message) {
+    color: $color-error;
+    font-size: 0.75rem;
+  }
+}

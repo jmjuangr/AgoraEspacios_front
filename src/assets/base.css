@@ -1,0 +1,136 @@
+/* Paleta base personalizada para AgoraEspacios */
+
+/* Colores de bajo nivel */
+:root {
+  --vt-c-white: #f9fafb;
+  --vt-c-white-soft: #f3f4f6;
+  --vt-c-white-mute: #e5e7eb;
+
+  --vt-c-black: #020617;
+  --vt-c-black-soft: #020617;
+  --vt-c-black-mute: #0b1120;
+
+  /* Azul tecnológico principal */
+  --vt-c-indigo: #1d4ed8;
+
+  /* Neutros para bordes */
+  --vt-c-divider-light-1: rgba(148, 163, 184, 0.7);  /* slate-400 */
+  --vt-c-divider-light-2: rgba(148, 163, 184, 0.35);
+  --vt-c-divider-dark-1: rgba(30, 64, 175, 0.9);     /* azul oscuro */
+  --vt-c-divider-dark-2: rgba(30, 64, 175, 0.6);
+
+  /* Texto en claro/oscuro */
+  --vt-c-text-light-1: #0f172a; /* slate-900 */
+  --vt-c-text-light-2: rgba(15, 23, 42, 0.7);
+  --vt-c-text-dark-1: #e5e7eb;  /* gris muy claro */
+  --vt-c-text-dark-2: rgba(226, 232, 240, 0.75);
+}
+
+/* Variables semánticas para el proyecto */
+:root {
+  /* Fondo general en modo claro */
+  --color-background: #f3f4f6;         /* gris suave */
+  --color-background-soft: #e5e7eb;    /* un poco más oscuro */
+  --color-background-mute: #d1d5db;
+
+  --color-surface: #ffffff;            /* tarjetas, bloques */
+  --color-surface-muted: #f9fafb;
+
+  --color-border: var(--vt-c-divider-light-2);
+  --color-border-hover: var(--vt-c-divider-light-1);
+
+  --color-heading: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-text-light-2);
+
+  /* Colores principales de la marca */
+  --color-primary: #2563eb;            /* azul principal */
+  --color-primary-soft: #dbeafe;
+  --color-primary-strong: #1d4ed8;
+
+  --color-accent: #06b6d4;             /* cyan/teal moderno */
+  --color-accent-soft: #cffafe;
+
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-error: #dc2626;
+
+  --section-gap: 160px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #020617;        /* casi negro azulado */
+    --color-background-soft: #020617;
+    --color-background-mute: #0b1120;
+
+    --color-surface: #020617;
+    --color-surface-muted: #020617;
+
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
+
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-text-dark-2);
+  }
+}
+
+/* Reset básico + tipografía */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000000 100%);
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+  line-height: 1.6;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar sutil y moderno (solo en navegadores que lo soportan) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.7);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.9);
+}
