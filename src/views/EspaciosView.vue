@@ -14,6 +14,76 @@
       </v-card-text>
     </v-card>
 
+    <!-- Filtros -->
+    <v-card class="ag-card espacios-filtros">
+      <div class="espacios-filtros__header">
+        <div>
+          <div class="title">Filtrar espacios</div>
+          <div class="subtitle">Filtra por texto, categoría o capacidad.</div>
+        </div>
+        <v-chip size="small" class="espacios-filtros__chip">
+          {{ espaciosFiltrados.length }} resultados
+        </v-chip>
+      </div>
+
+      <v-row>
+        <v-col cols="12" md="5">
+          <v-text-field
+            v-model="filtros.texto"
+            label="Buscar por nombre, ubicación o descripción"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+          />
+        </v-col>
+
+        <v-col cols="12" md="4">
+          <v-select
+            v-model="filtros.categoria"
+            :items="categoriasOptions"
+            label="Categoría"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+            clearable
+          />
+        </v-col>
+
+        <v-col cols="12" md="3">
+          <v-text-field
+            v-model.number="filtros.capacidadMin"
+            label="Capacidad mínima"
+            type="number"
+            min="0"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+          />
+        </v-col>
+      </v-row>
+
+      <div class="espacios-filtros__actions">
+        <v-btn
+          size="small"
+          variant="outlined"
+          class="ag-btn-secondary"
+          :disabled="!hayFiltrosActivos"
+          @click="limpiarFiltros"
+        >
+          Limpiar filtros
+        </v-btn>
+        <v-btn
+          size="small"
+          variant="outlined"
+          class="ag-btn-secondary"
+          :loading="espaciosStore.cargando"
+          @click="recargar"
+        >
+          Recargar
+        </v-btn>
+      </div>
+    </v-card>
+
     <!-- Estado de carga -->
     <v-row class="mt-4" v-if="espaciosStore.cargando" justify="center">
       <v-col cols="12" class="text-center">
@@ -57,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useEspaciosStore } from "../store/espacios";
 import SpaceCard from "../components/SpaceCard.vue";
@@ -73,6 +143,12 @@ onMounted(() => {
   }
 });
 
+const filtros = reactive({
+  texto: "",
+  categoria: "",
+  capacidadMin: null as number | null,
+});
+
 type EspacioCardData = {
   id: number;
   nombre: string;
@@ -84,8 +160,46 @@ type EspacioCardData = {
   accesible?: boolean;
 };
 
+const categoriasOptions = computed(() => {
+  const valores = new Set<string>();
+  espaciosStore.espacios.forEach((e) => {
+    valores.add(e.categoriaNombre ?? "Sin categoría");
+  });
+  return Array.from(valores).sort((a, b) => a.localeCompare(b));
+});
+
+const espaciosFiltrados = computed(() => {
+  const texto = filtros.texto.trim().toLowerCase();
+  const categoria = filtros.categoria.trim();
+  const capacidadMin = filtros.capacidadMin ?? 0;
+
+  return espaciosStore.espacios.filter((e) => {
+    const categoriaEspacio = e.categoriaNombre ?? "Sin categoría";
+    const coincideCategoria = categoria ? categoriaEspacio === categoria : true;
+    const coincideCapacidad = capacidadMin ? e.capacidad >= capacidadMin : true;
+
+    if (!texto) {
+      return coincideCategoria && coincideCapacidad;
+    }
+
+    const textoEspacio = [
+      e.nombre,
+      e.ubicacion,
+      e.descripcion,
+      categoriaEspacio,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return (
+      coincideCategoria && coincideCapacidad && textoEspacio.includes(texto)
+    );
+  });
+});
+
 const espaciosParaCards = computed<EspacioCardData[]>(() =>
-  espaciosStore.espacios.map((e: EspacioDTO) => ({
+  espaciosFiltrados.value.map((e: EspacioDTO) => ({
     id: e.id,
     nombre: e.nombre,
     // En el DTO viene como categoriaNombre, no como e.categoria?.nombre
@@ -95,8 +209,25 @@ const espaciosParaCards = computed<EspacioCardData[]>(() =>
     descripcion: e.descripcion,
     imagenUrl: e.imagenUrl,
     accesible: undefined, // preparado para futuro
-  }))
+  })),
 );
+
+const hayFiltrosActivos = computed(
+  () =>
+    filtros.texto.trim().length > 0 ||
+    filtros.categoria.trim().length > 0 ||
+    (filtros.capacidadMin ?? 0) > 0,
+);
+
+const limpiarFiltros = () => {
+  filtros.texto = "";
+  filtros.categoria = "";
+  filtros.capacidadMin = null;
+};
+
+const recargar = async () => {
+  await espaciosStore.cargarEspacios();
+};
 
 // Navegar al detalle
 const handleVerDetalle = (id: number) => {
@@ -128,5 +259,29 @@ const handleReservar = (id: number) => {
       max-width: 640px;
     }
   }
+}
+
+.espacios-filtros {
+  @include ag-section($spacing-4);
+}
+
+.espacios-filtros__header {
+  @include ag-card-header;
+  margin-bottom: $spacing-2;
+}
+
+.espacios-filtros__actions {
+  display: flex;
+  gap: $spacing-2;
+  justify-content: flex-end;
+}
+
+.espacios-filtros__chip {
+  background-color: rgba(37, 99, 235, 0.18);
+  color: $color-primary-soft;
+}
+
+.ag-btn-secondary {
+  @include ag-button-secondary;
 }
 </style>
