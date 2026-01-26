@@ -7,6 +7,8 @@ import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import AdminView from "../views/AdminView.vue";
 import MisReservasView from "../views/MisReservasView.vue";
+import EspaciosView from "../views/EspaciosView.vue";
+import EspacioDetalleView from "../views/EspacioDetalleView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +16,18 @@ const router = createRouter({
     { path: "/", name: "home", component: HomeView },
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
+    {
+      path: "/espacios",
+      name: "espacios",
+      component: EspaciosView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/espacios/:id",
+      name: "espacioDetalle",
+      component: EspacioDetalleView,
+      meta: { requiresAuth: true },
+    },
     {
       path: "/mis-reservas",
       name: "mis-reservas",
