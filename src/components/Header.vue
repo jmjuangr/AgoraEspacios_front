@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar density="comfortable" class="ag-header" flat>
+  <v-app-bar density="comfortable" class="ag-header" flat theme="dark">
     <!-- Marca / título -->
     <div class="ag-header__brand" @click="goHome">
       <div class="ag-header__logo">
@@ -19,7 +19,11 @@
     <div v-if="isLoggedIn" class="ag-header__nav">
       <v-btn
         variant="text"
-        class="ag-header__nav-btn"
+        :class="[
+          'ag-header__nav-btn',
+          { 'ag-header__nav-btn--active': isActiveRoute('/espacios') },
+        ]"
+        color="grey-lighten-4"
         @click="goTo('/espacios')"
       >
         {{ $t("header.espacios") }}
@@ -27,7 +31,11 @@
 
       <v-btn
         variant="text"
-        class="ag-header__nav-btn"
+        :class="[
+          'ag-header__nav-btn',
+          { 'ag-header__nav-btn--active': isActiveRoute('/mis-reservas') },
+        ]"
+        color="grey-lighten-4"
         @click="goTo('/mis-reservas')"
       >
         {{ $t("header.misReservas") }}
@@ -36,7 +44,12 @@
       <v-btn
         v-if="isAdmin"
         variant="text"
-        class="ag-header__nav-btn ag-header__nav-btn--admin"
+        :class="[
+          'ag-header__nav-btn',
+          'ag-header__nav-btn--admin',
+          { 'ag-header__nav-btn--active': isActiveRoute('/admin') },
+        ]"
+        color="cyan-lighten-2"
         @click="goTo('/admin')"
       >
         {{ $t("header.admin") }}
@@ -70,11 +83,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth";
 
 const auth = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 
 const isLoggedIn = computed(() => auth.isAuthenticated);
 const isAdmin = computed(() => auth.isAdmin);
@@ -92,6 +106,9 @@ const goTo = (path: string) => {
   router.push(path);
 };
 
+const isActiveRoute = (path: string) =>
+  route.path === path || route.path.startsWith(`${path}/`);
+
 const handleLogout = () => {
   auth.logout();
   router.push("/login");
@@ -102,9 +119,10 @@ const handleLogout = () => {
 @import "@/assets/styles/_mixins.scss";
 
 .ag-header {
-  background-color: $color-surface;
+  background-color: $color-background-soft;
   border-bottom: 1px solid $color-border;
   padding-inline: $spacing-4;
+  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.35);
 }
 
 .ag-header__brand {
@@ -114,7 +132,7 @@ const handleLogout = () => {
   cursor: pointer;
 
   & .v-icon {
-    color: $color-primary-soft;
+    color: $color-heading;
   }
 }
 
@@ -137,12 +155,12 @@ const handleLogout = () => {
 .ag-header__app-name {
   font-size: 1rem;
   font-weight: 600;
-  color: $color-heading;
+  color: #f8fafc;
 }
 
 .ag-header__app-subtitle {
   font-size: 0.75rem;
-  color: $color-text-muted;
+  color: #cbd5e1;
 }
 
 .ag-header__nav {
@@ -154,17 +172,32 @@ const handleLogout = () => {
 .ag-header__nav-btn {
   text-transform: none;
   font-size: 0.9rem;
-  color: $color-text-muted;
+  border-radius: $radius-pill;
+  padding-inline: $spacing-3;
+  min-height: 32px;
 
   &:hover {
-    color: $color-heading;
+    background-color: rgba(37, 99, 235, 0.12);
+  }
+
+  &--active {
+    background-color: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(148, 163, 184, 0.45);
+  }
+
+  :deep(.v-btn__content) {
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   &--admin {
-    color: $color-secondary;
-
     &:hover {
-      color: $color-secondary-soft;
+      background-color: rgba(6, 182, 212, 0.12);
+    }
+
+    &.ag-header__nav-btn--active {
+      background-color: rgba(6, 182, 212, 0.18);
+      border-color: rgba(6, 182, 212, 0.35);
     }
   }
 }
@@ -178,10 +211,14 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   font-size: 0.85rem;
-  color: $color-text;
+  color: $color-heading;
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid $color-border;
+  border-radius: $radius-pill;
+  padding: 4px 10px;
 
   .v-icon {
-    color: $color-text-muted;
+    color: $color-primary-soft;
   }
 }
 
