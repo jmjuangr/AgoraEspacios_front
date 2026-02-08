@@ -266,7 +266,7 @@ async function borrar(id: number) {
 @import "@/assets/styles/_mixins.scss";
 
 .mis-reservas-container {
-  margin-top: $spacing-6;
+  margin-top: $spacing-10 + $spacing-2;
 }
 
 .mis-reservas-card {

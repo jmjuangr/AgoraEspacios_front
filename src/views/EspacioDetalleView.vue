@@ -349,10 +349,6 @@ const crearReserva = async () => {
 
 .badge {
   @include ag-badge();
-
-  &--category {
-    // categoría, color por defecto
-  }
 }
 
 .ag-btn-primary {

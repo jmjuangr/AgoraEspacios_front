@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="espacios-container">
     <!-- Cabecera de la sección -->
     <v-card class="espacios-header">
       <v-card-text>
@@ -242,6 +242,10 @@ const handleReservar = (id: number) => {
 
 <style scoped lang="scss">
 @import "@/assets/styles/_mixins.scss";
+
+.espacios-container {
+  margin-top: $spacing-10 + $spacing-2;
+}
 
 .espacios-header {
   @include ag-section($spacing-4);

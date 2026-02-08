@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mt-6">
+  <v-container class="admin-container">
     <v-card class="ag-card pa-4">
       <!-- Título principal -->
       <v-card-title class="text-h6 mb-2">
@@ -390,5 +390,9 @@ const resetEspacioForm = () => {
 
 .ag-card {
   @include ag-section($spacing-4);
+}
+
+.admin-container {
+  margin-top: $spacing-10 + $spacing-2;
 }
 </style>

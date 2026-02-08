@@ -7,47 +7,42 @@
   --vt-c-white-mute: #e5e7eb;
 
   --vt-c-black: #020617;
-  --vt-c-black-soft: #020617;
-  --vt-c-black-mute: #0b1120;
+  --vt-c-black-soft: #0b1120;
+  --vt-c-black-mute: #111827;
 
-  /* Azul tecnológico principal */
   --vt-c-indigo: #1d4ed8;
 
-  /* Neutros para bordes */
-  --vt-c-divider-light-1: rgba(148, 163, 184, 0.7);  /* slate-400 */
+  --vt-c-divider-light-1: rgba(148, 163, 184, 0.7);
   --vt-c-divider-light-2: rgba(148, 163, 184, 0.35);
-  --vt-c-divider-dark-1: rgba(30, 64, 175, 0.9);     /* azul oscuro */
-  --vt-c-divider-dark-2: rgba(30, 64, 175, 0.6);
+  --vt-c-divider-dark-1: rgba(59, 130, 246, 0.7);
+  --vt-c-divider-dark-2: rgba(148, 163, 184, 0.45);
 
-  /* Texto en claro/oscuro */
-  --vt-c-text-light-1: #0f172a; /* slate-900 */
+  --vt-c-text-light-1: #0f172a;
   --vt-c-text-light-2: rgba(15, 23, 42, 0.7);
-  --vt-c-text-dark-1: #e5e7eb;  /* gris muy claro */
-  --vt-c-text-dark-2: rgba(226, 232, 240, 0.75);
+  --vt-c-text-dark-1: #f1f5f9;
+  --vt-c-text-dark-2: #cbd5e1;
 }
 
-/* Variables semánticas para el proyecto */
+/* Variables semanticas del proyecto (tema oscuro uniforme) */
 :root {
-  /* Fondo general en modo claro */
-  --color-background: #f3f4f6;         /* gris suave */
-  --color-background-soft: #e5e7eb;    /* un poco más oscuro */
-  --color-background-mute: #d1d5db;
+  --color-background: #020617;
+  --color-background-soft: #0b1120;
+  --color-background-mute: #111827;
 
-  --color-surface: #ffffff;            /* tarjetas, bloques */
-  --color-surface-muted: #f9fafb;
+  --color-surface: #0b1120;
+  --color-surface-muted: #111827;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-border: var(--vt-c-divider-dark-2);
+  --color-border-hover: var(--vt-c-divider-dark-1);
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-2);
+  --color-heading: var(--vt-c-text-dark-1);
+  --color-text: var(--vt-c-text-dark-2);
 
-  /* Colores principales de la marca */
-  --color-primary: #2563eb;            /* azul principal */
+  --color-primary: #2563eb;
   --color-primary-soft: #dbeafe;
   --color-primary-strong: #1d4ed8;
 
-  --color-accent: #06b6d4;             /* cyan/teal moderno */
+  --color-accent: #06b6d4;
   --color-accent-soft: #cffafe;
 
   --color-success: #16a34a;
@@ -55,27 +50,14 @@
   --color-error: #dc2626;
 
   --section-gap: 160px;
+
+  --ag-card-text: #f1f5f9;
+  --ag-card-text-muted: #cbd5e1;
+  --ag-card-field-bg: #0f172a;
+  --ag-card-field-border: rgba(148, 163, 184, 0.55);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #020617;        /* casi negro azulado */
-    --color-background-soft: #020617;
-    --color-background-mute: #0b1120;
-
-    --color-surface: #020617;
-    --color-surface-muted: #020617;
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
-
-/* Reset básico + tipografía */
-
+/* Reset basico + tipografia */
 *,
 *::before,
 *::after {
@@ -87,23 +69,21 @@
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000000 100%);
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
+  background-color: var(--color-background);
+  transition: color 0.3s ease, background-color 0.3s ease;
   line-height: 1.6;
   font-family:
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    'Segoe UI',
+    "Segoe UI",
     Roboto,
     Oxygen,
     Ubuntu,
     Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
     sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
@@ -111,7 +91,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar sutil y moderno (solo en navegadores que lo soportan) */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.7) transparent;

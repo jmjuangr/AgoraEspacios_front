@@ -37,3 +37,47 @@ a,
     padding: 0;
   }
 }
+
+/* Contraste global para tarjetas del proyecto */
+.ag-card,
+.ag-card .v-card-title,
+.ag-card .v-card-subtitle,
+.ag-card .v-card-text,
+.ag-card .v-table,
+.ag-card .v-data-table {
+  color: var(--ag-card-text) !important;
+}
+
+.ag-card .text-disabled,
+.ag-card .text-caption,
+.ag-card .v-messages__message,
+.ag-card .v-label {
+  color: var(--ag-card-text-muted) !important;
+}
+
+/* Campos con fondo oscuro para evitar blancos fuertes sobre tarjetas */
+.ag-card .v-field {
+  background-color: var(--ag-card-field-bg) !important;
+  border-radius: 10px;
+}
+
+.ag-card .v-field--variant-outlined .v-field__outline {
+  color: var(--ag-card-field-border) !important;
+}
+
+.ag-card .v-field input,
+.ag-card .v-field textarea,
+.ag-card .v-field .v-field__input {
+  color: var(--ag-card-text) !important;
+}
+
+.ag-card .v-select__selection {
+  color: var(--ag-card-text) !important;
+}
+
+.ag-card .v-table,
+.ag-card .v-table__wrapper,
+.ag-card .v-data-table__wrapper,
+.ag-card table {
+  background-color: transparent !important;
+}
