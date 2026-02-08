@@ -24,7 +24,7 @@
         <section class="mis-reservas__form mb-6">
           <h3 class="mis-reservas__subtitle">Nueva reserva</h3>
 
-          <v-form ref="formRef" @submit.prevent="crearNuevaReserva">
+          <v-form @submit.prevent="crearNuevaReserva">
             <v-row>
               <v-col cols="12" md="4">
                 <v-select
@@ -146,7 +146,6 @@ import { useEspaciosStore } from "../store/espacios";
 const espaciosStore = useEspaciosStore();
 
 // refs para formulario
-const formRef = ref();
 const enviando = ref(false);
 const formError = ref("");
 
