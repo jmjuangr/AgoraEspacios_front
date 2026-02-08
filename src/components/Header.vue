@@ -102,12 +102,8 @@ const handleLogout = () => {
 @import "@/assets/styles/_mixins.scss";
 
 .ag-header {
-  background: radial-gradient(
-    circle at top left,
-    rgba(37, 99, 235, 0.22),
-    rgba(15, 23, 42, 0.98)
-  );
-  border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
   padding-inline: $spacing-4;
 }
 
@@ -129,12 +125,8 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(
-    circle at 30% 0,
-    rgba(37, 99, 235, 0.8),
-    rgba(15, 23, 42, 0.95)
-  );
-  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.45);
+  background-color: $color-primary-strong;
+  box-shadow: 0 0 0 1px $color-border;
 }
 
 .ag-header__titles {

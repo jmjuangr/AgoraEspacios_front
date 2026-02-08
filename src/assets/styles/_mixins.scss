@@ -8,16 +8,12 @@
 
 // Mixin de tarjeta principal (para v-card o div.ag-card)
 @mixin ag-card($padding: $spacing-5) {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.92),
-    rgba(15, 23, 42, 0.98)
-  );
+  background-color: $color-surface-soft;
   border-radius: $radius-lg;
   padding: $padding;
-  @include ag-elevation($shadow-soft-sm, rgba(30, 64, 175, 0.8));
+  @include ag-elevation($shadow-soft-sm, $color-border);
 
-  color: $color-text;
+  color: $color-heading;
 }
 
 // Mixin de sección de página (para contenedores grandes)
@@ -25,12 +21,8 @@
   margin-bottom: $spacing-8;
   padding: $spacing-5;
   border-radius: $radius-lg;
-  background: radial-gradient(
-    circle at top left,
-    rgba(37, 99, 235, 0.18),
-    rgba(15, 23, 42, 0.98)
-  );
-  @include ag-elevation($shadow-soft-sm, rgba(30, 64, 175, 0.55));
+  background-color: $color-surface;
+  @include ag-elevation($shadow-soft-sm, $color-border);
   
   display: flex;
   flex-direction: column;
@@ -66,7 +58,7 @@
   border-radius: $radius-pill;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, $color-primary, $color-primary-strong);
+  background-color: $color-primary;
   color: #f9fafb;
   font-weight: 500;
   font-size: 0.95rem;
@@ -78,6 +70,7 @@
   box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
 
   &:hover {
+    background-color: $color-primary-strong;
     transform: translateY(-1px);
     box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
   }
@@ -148,8 +141,8 @@
 // Mixin para inputs (puede usarse en contenedores alrededor de v-text-field si estilamos envoltorios).
 @mixin ag-input-shell {
   border-radius: $radius-md;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid $color-border;
+  background-color: $color-background-soft;
   padding: $spacing-2 $spacing-3;
   transition:
     border-color $transition-fast,
@@ -157,9 +150,9 @@
     background-color $transition-fast;
 
   &:focus-within {
-    border-color: rgba(37, 99, 235, 0.8);
+    border-color: $color-primary;
     box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.8);
-    background-color: rgba(15, 23, 42, 0.98);
+    background-color: $color-background-mute;
   }
 }
 
@@ -182,7 +175,7 @@
 @mixin ag-auth-fields {
  
   ::v-deep(.v-field) {
-    background-color: $color-background-soft; 
+    background-color: $color-background-mute;
     border-radius: $radius-md;
   }
 
