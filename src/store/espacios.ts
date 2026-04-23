@@ -19,6 +19,7 @@ export const useEspaciosStore = defineStore("espacios", {
     espacios: [] as EspacioDTO[],
     reservasUsuario: [] as ReservaDTO[],
     reservasAdmin: [] as ReservaDTO[],
+    reservasEspacio: [] as ReservaDTO[],
     cargando: false,
     error: "" as string,
   }),
@@ -143,6 +144,20 @@ export const useEspaciosStore = defineStore("espacios", {
         this.reservasAdmin = await apiGet<ReservaDTO[]>("/reservas");
       } catch (err: any) {
         this.setError(err.message || "Error al cargar reservas (admin)");
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    async cargarReservasPorEspacio(espacioId: number) {
+      this.cargando = true;
+      this.error = "";
+      try {
+        this.reservasEspacio = await apiGet<ReservaDTO[]>(
+          `/reservas/espacio/${espacioId}`
+        );
+      } catch (err: any) {
+        this.setError(err.message || "Error al cargar reservas del espacio");
       } finally {
         this.cargando = false;
       }

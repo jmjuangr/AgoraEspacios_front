@@ -10,20 +10,17 @@
       Volver a espacios
     </v-btn>
 
-    <!-- Estado de carga -->
-    <v-row v-if="cargando" justify="center">
+    <v-row v-if="cargandoEspacio" justify="center">
       <v-col cols="12" class="text-center">
         <v-progress-circular indeterminate color="primary" />
         <div class="mt-2 text-caption">Cargando espacio...</div>
       </v-col>
     </v-row>
 
-    <!-- Error -->
-    <v-alert v-else-if="error" type="error" border="start" prominent>
-      {{ error }}
+    <v-alert v-else-if="errorEspacio" type="error" border="start" prominent>
+      {{ errorEspacio }}
     </v-alert>
 
-    <!-- No encontrado -->
     <v-alert
       v-else-if="espacioNoEncontrado"
       type="warning"
@@ -33,7 +30,6 @@
       No se ha encontrado el espacio solicitado.
     </v-alert>
 
-    <!-- Contenido -->
     <div v-else>
       <v-card class="ag-card espacio-detalle__info">
         <v-row>
@@ -55,10 +51,10 @@
             <div class="espacio-detalle__header">
               <div>
                 <h2>{{ espacio?.nombre }}</h2>
-                <p class="espacio-detalle__subtitle">Información del espacio</p>
+                <p class="espacio-detalle__subtitle">Informacion del espacio</p>
               </div>
               <span class="badge badge--category">
-                {{ espacio?.categoriaNombre || "Sin categoría" }}
+                {{ espacio?.categoriaNombre || "Sin categoria" }}
               </span>
             </div>
 
@@ -77,133 +73,66 @@
               {{ espacio?.descripcion }}
             </p>
             <p v-else class="espacio-detalle__descripcion is-empty">
-              Este espacio no tiene una descripción detallada todavía.
+              Este espacio no tiene una descripcion detallada todavia.
             </p>
           </v-col>
         </v-row>
       </v-card>
 
       <v-card class="ag-card espacio-detalle__reserva">
-        <div class="espacio-detalle__header">
+        <div class="espacio-detalle__header espacio-detalle__header--calendar">
           <div>
-            <div class="title">Reservar este espacio</div>
-            <div class="subtitle">Selecciona fecha y hora para tu reserva.</div>
-          </div>
-        </div>
-
-        <v-alert
-          v-if="formSuccess"
-          type="success"
-          class="mb-3"
-          density="comfortable"
-        >
-          {{ formSuccess }}
-        </v-alert>
-
-        <v-form @submit.prevent="crearReserva">
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="formReserva.fechaInicio"
-                label="Fecha y hora inicio"
-                type="datetime-local"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-              />
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="formReserva.fechaFin"
-                label="Fecha y hora fin"
-                type="datetime-local"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-              />
-            </v-col>
-
-            <v-col cols="12">
-              <v-text-field
-                v-model="formReserva.titulo"
-                label="Título (opcional)"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-              />
-            </v-col>
-          </v-row>
-
-          <div class="espacio-detalle__actions">
-            <v-btn
-              type="submit"
-              color="primary"
-              class="ag-btn-primary"
-              :loading="enviando"
-            >
-              Confirmar reserva
-            </v-btn>
-
-            <v-btn
-              variant="outlined"
-              class="ag-btn-secondary"
-              @click="irMisReservas"
-            >
-              Ver mis reservas
-            </v-btn>
+            <div class="title">Reservas y disponibilidad</div>
+            <div class="subtitle">Gestiona tu reserva desde el calendario.</div>
           </div>
 
-          <v-alert v-if="formError" type="error" class="mt-3" density="compact">
-            {{ formError }}
-          </v-alert>
-        </v-form>
-
-        <div class="espacio-detalle__nota">
-          <v-icon size="16" class="mr-1">mdi-information-outline</v-icon>
-          Las reservas quedarán pendientes de validación según la normativa
-          municipal.
+          <v-btn
+            variant="outlined"
+            class="ag-btn-secondary"
+            @click="irMisReservas"
+          >
+            Ver mis reservas
+          </v-btn>
         </div>
+
+        <CalendarioEspacio v-if="espacio" :espacio-id="espacio.id" />
       </v-card>
     </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useEspaciosStore } from "../store/espacios";
+import CalendarioEspacio from "../components/CalendarioEspacio.vue";
 
 const espaciosStore = useEspaciosStore();
 const route = useRoute();
 const router = useRouter();
 
-const formReserva = reactive({
-  fechaInicio: "",
-  fechaFin: "",
-  titulo: "",
-});
-
-const enviando = ref(false);
-const formError = ref("");
-const formSuccess = ref("");
-
 const espacioId = computed(() => Number(route.params.id));
 const idValido = computed(() => !Number.isNaN(espacioId.value));
 
-const cargando = computed(() => espaciosStore.cargando);
-const error = computed(() => espaciosStore.error);
+const cargandoEspacio = ref(false);
+const errorEspacio = ref("");
 const espacio = computed(() =>
-  espaciosStore.espacios.find((e) => e.id === espacioId.value),
+  espaciosStore.espacios.find((e) => e.id === espacioId.value)
 );
 
 const espacioNoEncontrado = computed(
-  () => idValido.value && !cargando.value && !espacio.value,
+  () => idValido.value && !cargandoEspacio.value && !espacio.value
 );
 
 onMounted(async () => {
   if (!espaciosStore.espacios.length) {
+    cargandoEspacio.value = true;
+    errorEspacio.value = "";
     await espaciosStore.cargarEspacios();
+    if (espaciosStore.error) {
+      errorEspacio.value = espaciosStore.error;
+    }
+    cargandoEspacio.value = false;
   }
 });
 
@@ -213,55 +142,6 @@ const volver = () => {
 
 const irMisReservas = () => {
   router.push({ name: "mis-reservas" });
-};
-
-const crearReserva = async () => {
-  formError.value = "";
-  formSuccess.value = "";
-
-  if (!espacio.value) {
-    formError.value = "No se ha podido identificar el espacio.";
-    return;
-  }
-
-  if (!formReserva.fechaInicio || !formReserva.fechaFin) {
-    formError.value = "Debes indicar fecha y hora de inicio y fin.";
-    return;
-  }
-
-  const inicio = new Date(formReserva.fechaInicio);
-  const fin = new Date(formReserva.fechaFin);
-
-  if (Number.isNaN(inicio.getTime()) || Number.isNaN(fin.getTime())) {
-    formError.value = "Revisa las fechas introducidas.";
-    return;
-  }
-
-  if (inicio >= fin) {
-    formError.value = "La fecha/hora de fin debe ser posterior a la de inicio.";
-    return;
-  }
-
-  enviando.value = true;
-  try {
-    await espaciosStore.crearReserva({
-      espacioId: espacio.value.id,
-      fechaInicio: formReserva.fechaInicio,
-      fechaFin: formReserva.fechaFin,
-      titulo: formReserva.titulo,
-    });
-
-    formReserva.fechaInicio = "";
-    formReserva.fechaFin = "";
-    formReserva.titulo = "";
-
-    formSuccess.value = "Reserva enviada correctamente.";
-  } catch (e: any) {
-    formError.value =
-      e?.message || "Error al crear la reserva. Revisa los datos.";
-  } finally {
-    enviando.value = false;
-  }
 };
 </script>
 
@@ -285,6 +165,10 @@ const crearReserva = async () => {
   @include ag-card-header;
 }
 
+.espacio-detalle__header--calendar {
+  margin-bottom: 0;
+}
+
 .espacio-detalle__subtitle {
   color: $color-text-muted;
   font-size: 0.85rem;
@@ -297,14 +181,14 @@ const crearReserva = async () => {
 .espacio-detalle__image-placeholder {
   height: 260px;
   border-radius: $radius-lg;
-  border: 1px dashed rgba(148, 163, 184, 0.5);
+  border: 1px dashed $color-border;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: $spacing-2;
   color: $color-text-muted;
-  background: rgba(15, 23, 42, 0.6);
+  background: $color-background-soft;
 }
 
 .espacio-detalle__meta {
@@ -331,28 +215,8 @@ const crearReserva = async () => {
   }
 }
 
-.espacio-detalle__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-2;
-  margin-top: $spacing-2;
-}
-
-.espacio-detalle__nota {
-  margin-top: $spacing-3;
-  display: flex;
-  align-items: center;
-  gap: $spacing-1;
-  font-size: 0.8rem;
-  color: $color-text-muted;
-}
-
 .badge {
   @include ag-badge();
-}
-
-.ag-btn-primary {
-  @include ag-button-primary;
 }
 
 .ag-btn-secondary {
