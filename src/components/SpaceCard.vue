@@ -198,6 +198,16 @@ const onReservar = () => {
 
 .ag-btn-primary {
   @include ag-button-primary;
+
+  color: #fff !important;
+
+  ::v-deep(.v-btn__content) {
+    color: #fff !important;
+  }
+
+  ::v-deep(.v-icon) {
+    color: #fff !important;
+  }
 }
 
 .ag-btn-secondary {
