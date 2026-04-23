@@ -286,6 +286,7 @@ const guardarCategoria = async () => {
   if (!categoriaNombre.value.trim()) return;
 
   const dto = {
+    id: categoriaEditId.value ?? 0,
     nombre: categoriaNombre.value.trim(),
     descripcion: categoriaDescripcion.value.trim(),
   };
@@ -339,6 +340,7 @@ const guardarEspacio = async () => {
   }
 
   const dto = {
+    id: espacioEditId.value ?? 0,
     nombre: espacioNombre.value.trim(),
     categoriaEspacioId: espacioCategoriaId.value,
     capacidad: Number(espacioCapacidad.value),

@@ -42,6 +42,7 @@ export interface CategoriaEspacioCreateDTO {
 }
 
 export interface CategoriaEspacioUpdateDTO {
+  id: number;
   nombre: string;
   descripcion?: string;
 }
@@ -67,7 +68,9 @@ export interface EspacioCreateDTO {
   imagenUrl?: string;
 }
 
-export interface EspacioUpdateDTO extends EspacioCreateDTO {}
+export interface EspacioUpdateDTO extends EspacioCreateDTO {
+  id: number;
+}
 
 // ---------- RESERVAS ----------
 export interface ReservaDTO {
