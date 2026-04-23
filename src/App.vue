@@ -16,7 +16,12 @@ import Footer from "./components/Footer.vue";
 </script>
 
 <style scoped>
+.v-app {
+  min-height: 100vh;
+}
+
 .v-main {
-  min-height: calc(100vh - 128px); /* aprox header+footer */
+  flex: 1 0 auto;
+  padding-bottom: 60px;
 }
 </style>

@@ -179,6 +179,11 @@
     border-radius: $radius-md;
   }
 
+  ::v-deep(.v-field__prepend-inner .v-icon) {
+    color: $color-heading;
+    opacity: 1;
+  }
+
   ::v-deep(.v-field--variant-outlined .v-field__outline) {
     --v-border-opacity: 0.45;
     color: $color-border;
