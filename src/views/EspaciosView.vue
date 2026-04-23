@@ -138,6 +138,10 @@ const espaciosStore = useEspaciosStore();
 const router = useRouter();
 
 onMounted(() => {
+  if (!espaciosStore.categorias.length) {
+    espaciosStore.cargarCategorias();
+  }
+
   if (!espaciosStore.espacios.length) {
     espaciosStore.cargarEspacios();
   }
@@ -160,10 +164,22 @@ type EspacioCardData = {
   accesible?: boolean;
 };
 
+const getCategoriaNombre = (e: EspacioDTO) => {
+  if (e.categoriaNombre?.trim()) {
+    return e.categoriaNombre;
+  }
+
+  const categoria = espaciosStore.categorias.find(
+    (c) => c.id === e.categoriaEspacioId,
+  );
+
+  return categoria?.nombre || "Sin categoría";
+};
+
 const categoriasOptions = computed(() => {
   const valores = new Set<string>();
   espaciosStore.espacios.forEach((e) => {
-    valores.add(e.categoriaNombre ?? "Sin categoría");
+    valores.add(getCategoriaNombre(e));
   });
   return Array.from(valores).sort((a, b) => a.localeCompare(b));
 });
@@ -174,7 +190,7 @@ const espaciosFiltrados = computed(() => {
   const capacidadMin = filtros.capacidadMin ?? 0;
 
   return espaciosStore.espacios.filter((e) => {
-    const categoriaEspacio = e.categoriaNombre ?? "Sin categoría";
+    const categoriaEspacio = getCategoriaNombre(e);
     const coincideCategoria = categoria ? categoriaEspacio === categoria : true;
     const coincideCapacidad = capacidadMin ? e.capacidad >= capacidadMin : true;
 
@@ -202,13 +218,12 @@ const espaciosParaCards = computed<EspacioCardData[]>(() =>
   espaciosFiltrados.value.map((e: EspacioDTO) => ({
     id: e.id,
     nombre: e.nombre,
-    // En el DTO viene como categoriaNombre, no como e.categoria?.nombre
-    categoriaNombre: e.categoriaNombre ?? "Sin categoría",
+    categoriaNombre: getCategoriaNombre(e),
     capacidad: e.capacidad,
     ubicacion: e.ubicacion,
     descripcion: e.descripcion,
     imagenUrl: e.imagenUrl,
-    accesible: undefined, // preparado para futuro
+    accesible: undefined,
   })),
 );
 
@@ -229,12 +244,10 @@ const recargar = async () => {
   await espaciosStore.cargarEspacios();
 };
 
-// Navegar al detalle
 const handleVerDetalle = (id: number) => {
   router.push({ name: "espacioDetalle", params: { id } });
 };
 
-// De momento, al pulsar Reservar también iremos al detalle
 const handleReservar = (id: number) => {
   router.push({ name: "espacioDetalle", params: { id } });
 };
