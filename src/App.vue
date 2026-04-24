@@ -2,8 +2,10 @@
   <v-app>
     <Header />
 
-    <v-main class="pa-4">
-      <router-view />
+    <v-main class="app-main">
+      <div class="app-main__content">
+        <router-view />
+      </div>
     </v-main>
 
     <Footer />
@@ -20,8 +22,11 @@ import Footer from "./components/Footer.vue";
   min-height: 100vh;
 }
 
-.v-main {
+.app-main {
   flex: 1 0 auto;
-  padding-bottom: 60px;
+}
+
+.app-main__content {
+  padding: 32px 16px 88px;
 }
 </style>
