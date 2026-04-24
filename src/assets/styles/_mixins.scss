@@ -104,6 +104,17 @@
     color $transition-fast,
     border-color $transition-fast;
 
+  color: $color-heading;
+
+  ::v-deep(.v-btn__content) {
+    color: $color-heading;
+  }
+
+  ::v-deep(.v-icon) {
+    color: $color-heading;
+    opacity: 1;
+  }
+
   &:hover {
     background-color: rgba(15, 23, 42, 0.9);
     color: $color-heading;
@@ -179,7 +190,7 @@
     border-radius: $radius-md;
   }
 
-  ::v-deep(.v-field__prepend-inner .v-icon) {
+  ::v-deep(.v-field .v-icon) {
     color: $color-heading;
     opacity: 1;
   }

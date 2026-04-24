@@ -71,6 +71,27 @@ a,
   color: var(--ag-card-text) !important;
 }
 
+.ag-card .v-field .v-icon,
+.ag-card .v-btn--variant-text .v-icon,
+.ag-card .v-btn--variant-outlined .v-icon,
+.ag-card .v-data-table .v-icon {
+  color: var(--ag-card-text) !important;
+  opacity: 1 !important;
+}
+
+.ag-card .text-success .v-icon,
+.ag-card .text-warning .v-icon,
+.ag-card .text-error .v-icon,
+.ag-card .text-info .v-icon,
+.ag-card .text-primary .v-icon,
+.ag-card .v-icon.text-success,
+.ag-card .v-icon.text-warning,
+.ag-card .v-icon.text-error,
+.ag-card .v-icon.text-info,
+.ag-card .v-icon.text-primary {
+  color: inherit !important;
+}
+
 .ag-card .v-select__selection {
   color: var(--ag-card-text) !important;
 }

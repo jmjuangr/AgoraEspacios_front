@@ -2,8 +2,7 @@
   <v-container class="espacio-detalle">
     <v-btn
       size="small"
-      variant="outlined"
-      class="ag-btn-secondary mb-4"
+      class="ag-btn-primary espacio-detalle__back-button"
       @click="volver"
     >
       <v-icon size="18" class="mr-1">mdi-arrow-left</v-icon>
@@ -149,7 +148,12 @@ const irMisReservas = () => {
 @import "@/assets/styles/_mixins.scss";
 
 .espacio-detalle {
-  margin-top: $spacing-6;
+  margin-top: $spacing-8;
+  margin-bottom: $spacing-6;
+}
+
+.espacio-detalle__back-button {
+  margin-bottom: $spacing-6;
 }
 
 .espacio-detalle__info {
@@ -217,6 +221,10 @@ const irMisReservas = () => {
 
 .badge {
   @include ag-badge();
+}
+
+.ag-btn-primary {
+  @include ag-button-primary;
 }
 
 .ag-btn-secondary {
