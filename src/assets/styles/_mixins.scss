@@ -107,12 +107,12 @@
   color: $color-heading;
 
   ::v-deep(.v-btn__content) {
-    color: $color-heading;
+    color: $color-heading !important;
   }
 
   ::v-deep(.v-icon) {
-    color: $color-heading;
-    opacity: 1;
+    color: $color-heading !important;
+    opacity: 1 !important;
   }
 
   &:hover {

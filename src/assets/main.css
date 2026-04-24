@@ -79,6 +79,14 @@ a,
   opacity: 1 !important;
 }
 
+.ag-card input[type="date"]::-webkit-calendar-picker-indicator,
+.ag-card input[type="time"]::-webkit-calendar-picker-indicator,
+.ag-card input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  opacity: 1;
+  cursor: pointer;
+}
+
 .ag-card .text-success .v-icon,
 .ag-card .text-warning .v-icon,
 .ag-card .text-error .v-icon,

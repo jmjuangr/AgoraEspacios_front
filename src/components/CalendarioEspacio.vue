@@ -23,11 +23,21 @@
     </v-alert>
 
     <div class="calendario-espacio__month-nav">
-      <v-btn size="small" variant="text" @click="mesAnterior">
+      <v-btn
+        size="small"
+        variant="text"
+        class="calendario-espacio__month-btn"
+        @click="mesAnterior"
+      >
         <v-icon size="18">mdi-chevron-left</v-icon>
       </v-btn>
       <strong>{{ mesActualLabel }}</strong>
-      <v-btn size="small" variant="text" @click="mesSiguiente">
+      <v-btn
+        size="small"
+        variant="text"
+        class="calendario-espacio__month-btn"
+        @click="mesSiguiente"
+      >
         <v-icon size="18">mdi-chevron-right</v-icon>
       </v-btn>
     </div>
@@ -433,6 +443,23 @@ async function crearReserva() {
   justify-content: center;
   gap: $spacing-2;
   color: $color-heading;
+}
+
+.calendario-espacio__month-btn {
+  color: $color-heading !important;
+
+  ::v-deep(.v-btn__content) {
+    color: $color-heading !important;
+  }
+
+  ::v-deep(.v-icon) {
+    color: $color-heading !important;
+    opacity: 1 !important;
+  }
+
+  &:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+  }
 }
 
 .calendario-espacio__grid {
