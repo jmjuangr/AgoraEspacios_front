@@ -8,8 +8,8 @@
 
       <!-- Subtítulo / ayuda -->
       <v-card-subtitle class="mb-4">
-        Gestiona categorías y espacios. Otras funciones de administración
-        (usuarios, reservas, informes) se ampliarán más adelante.
+        Gestiona categorías y espacios. La gestión global de reservas está
+        disponible en la vista Reservas.
       </v-card-subtitle>
 
       <!-- Mensaje de error general del store -->

@@ -54,6 +54,20 @@
       >
         {{ $t("header.admin") }}
       </v-btn>
+
+      <v-btn
+        v-if="isAdmin"
+        variant="text"
+        :class="[
+          'ag-header__nav-btn',
+          'ag-header__nav-btn--admin',
+          { 'ag-header__nav-btn--active': isActiveRoute('/reservas') },
+        ]"
+        color="cyan-lighten-2"
+        @click="goTo('/reservas')"
+      >
+        {{ $t("header.reservas") }}
+      </v-btn>
     </div>
 
     <v-spacer />

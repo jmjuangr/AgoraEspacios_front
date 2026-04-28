@@ -6,6 +6,7 @@ const messages = {
     header: {
       espacios: "Espacios",
       misReservas: "Mis reservas",
+      reservas: "Reservas",
       admin: "Administración",
       login: "Acceder",
       logout: "Cerrar sesión",
@@ -23,6 +24,7 @@ const messages = {
     header: {
       espacios: "Spaces",
       misReservas: "My bookings",
+      reservas: "Bookings",
       admin: "Administration",
       login: "Login",
       logout: "Logout",
