@@ -7,6 +7,7 @@ import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import AdminView from "../views/AdminView.vue";
 import MisReservasView from "../views/MisReservasView.vue";
+import ReservasView from "../views/ReservasView.vue";
 import EspaciosView from "../views/EspaciosView.vue";
 import EspacioDetalleView from "../views/EspacioDetalleView.vue";
 
@@ -38,6 +39,12 @@ const router = createRouter({
       path: "/admin",
       name: "admin",
       component: AdminView,
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: "/reservas",
+      name: "reservas",
+      component: ReservasView,
       meta: { requiresAuth: true, requiresAdmin: true },
     },
   ],

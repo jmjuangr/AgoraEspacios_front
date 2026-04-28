@@ -192,5 +192,15 @@ export const useEspaciosStore = defineStore("espacios", {
         this.setError(err.message || "Error al borrar reserva");
       }
     },
+
+    async borrarReservaAdmin(id: number) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/reservas/${id}`, "DELETE");
+        await this.cargarReservasAdmin();
+      } catch (err: any) {
+        this.setError(err.message || "Error al borrar reserva (admin)");
+      }
+    },
   },
 });
