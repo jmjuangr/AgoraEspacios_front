@@ -4,7 +4,7 @@
       <div>
         <div class="title">Disponibilidad del espacio</div>
         <div class="subtitle">
-          Revisa los bloques ocupados y crea tu reserva sin solapes.
+          Revisa las reservas aprobadas y solicita tu reserva.
         </div>
       </div>
       <v-btn
@@ -73,7 +73,9 @@
     <v-divider />
 
     <div class="calendario-espacio__selected-day">
-      <div class="title">Reservas del {{ formatearFecha(selectedDate) }}</div>
+      <div class="title">
+        Reservas aprobadas del {{ formatearFecha(selectedDate) }}
+      </div>
 
       <v-list v-if="reservasDelDia.length" density="compact" class="listado-dia">
         <v-list-item v-for="reserva in reservasDelDia" :key="reserva.id">
@@ -87,7 +89,7 @@
       </v-list>
 
       <div v-else class="calendario-espacio__empty-day">
-        No hay reservas para esta fecha.
+        No hay reservas aprobadas para esta fecha.
       </div>
     </div>
 
@@ -349,8 +351,20 @@ function reservasEnDia(isoDate: string): ReservaDTO[] {
   finDiaExclusivo.setDate(finDiaExclusivo.getDate() + 1);
 
   return reservasEspacio.value
-    .filter((r) => haySolape(new Date(r.fechaInicio), new Date(r.fechaFin), inicioDia, finDiaExclusivo))
+    .filter((r) => esReservaAprobada(r))
+    .filter((r) =>
+      haySolape(
+        new Date(r.fechaInicio),
+        new Date(r.fechaFin),
+        inicioDia,
+        finDiaExclusivo
+      )
+    )
     .sort((a, b) => +new Date(a.fechaInicio) - +new Date(b.fechaInicio));
+}
+
+function esReservaAprobada(reserva: ReservaDTO): boolean {
+  return reserva.estado.toLowerCase() === "aprobada";
 }
 
 function haySolape(
@@ -386,14 +400,11 @@ async function crearReserva() {
     return;
   }
 
-  const conflicto = reservasEspacio.value.some((r) =>
-    haySolape(
-      inicio,
-      fin,
-      new Date(r.fechaInicio),
-      new Date(r.fechaFin)
-    )
-  );
+  const conflicto = reservasEspacio.value
+    .filter((r) => esReservaAprobada(r))
+    .some((r) =>
+      haySolape(inicio, fin, new Date(r.fechaInicio), new Date(r.fechaFin))
+    );
 
   if (conflicto) {
     formError.value =
@@ -416,7 +427,8 @@ async function crearReserva() {
     }
 
     form.titulo = "";
-    formSuccess.value = "Reserva creada correctamente.";
+    formSuccess.value =
+      "Reserva creada correctamente. Queda pendiente de revision.";
 
     await cargarReservas();
     emit("reserva-creada");
