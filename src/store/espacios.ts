@@ -183,23 +183,53 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
-    async borrarReserva(id: number) {
+    async actualizarReservaAdmin(id: number, dto: ReservaUpdateDTO) {
       this.error = "";
       try {
-        await apiSend<void>(`/reservas/${id}`, "DELETE");
-        await this.cargarMisReservas();
+        await apiSend<ReservaDTO>(`/reservas/${id}`, "PUT", dto);
+        await this.cargarReservasAdmin();
       } catch (err: any) {
-        this.setError(err.message || "Error al borrar reserva");
+        this.setError(err.message || "Error al actualizar reserva (admin)");
       }
     },
 
-    async borrarReservaAdmin(id: number) {
+    async cancelarReserva(id: number) {
       this.error = "";
       try {
-        await apiSend<void>(`/reservas/${id}`, "DELETE");
+        await apiSend<void>(`/reservas/${id}/cancelar`, "PATCH");
+        await this.cargarMisReservas();
+      } catch (err: any) {
+        this.setError(err.message || "Error al cancelar reserva");
+      }
+    },
+
+    async cancelarReservaAdmin(id: number) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/reservas/${id}/cancelar`, "PATCH");
         await this.cargarReservasAdmin();
       } catch (err: any) {
-        this.setError(err.message || "Error al borrar reserva (admin)");
+        this.setError(err.message || "Error al cancelar reserva (admin)");
+      }
+    },
+
+    async aprobarReservaAdmin(id: number) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/reservas/${id}/aprobar`, "PATCH");
+        await this.cargarReservasAdmin();
+      } catch (err: any) {
+        this.setError(err.message || "Error al aprobar reserva");
+      }
+    },
+
+    async rechazarReservaAdmin(id: number) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/reservas/${id}/rechazar`, "PATCH");
+        await this.cargarReservasAdmin();
+      } catch (err: any) {
+        this.setError(err.message || "Error al rechazar reserva");
       }
     },
   },

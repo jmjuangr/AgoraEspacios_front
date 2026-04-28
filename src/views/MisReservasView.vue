@@ -138,13 +138,24 @@
 
             <template #item.acciones="{ item }">
               <v-btn
+                v-if="sePuedeEditar(item)"
+                size="small"
+                color="primary"
+                variant="text"
+                @click="abrirEditar(item)"
+              >
+                Editar
+              </v-btn>
+
+              <v-btn
+                v-if="sePuedeCancelar(item)"
                 icon
                 size="small"
                 color="error"
                 variant="text"
-                @click="borrar(item.id)"
+                @click="cancelar(item.id)"
               >
-                <v-icon size="18">mdi-delete-outline</v-icon>
+                <v-icon size="18">mdi-cancel</v-icon>
               </v-btn>
             </template>
 
@@ -230,6 +241,51 @@
         </section>
       </v-card-text>
     </v-card>
+
+    <v-dialog v-model="editDialog" max-width="520">
+      <v-card class="ag-card">
+        <v-card-title>Editar reserva</v-card-title>
+
+        <v-card-text>
+          <v-form @submit.prevent="guardarEdicion">
+            <v-text-field
+              v-model="editForm.fechaInicio"
+              label="Fecha inicio"
+              type="datetime-local"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+              required
+            />
+
+            <v-text-field
+              v-model="editForm.fechaFin"
+              label="Fecha fin"
+              type="datetime-local"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+              required
+            />
+
+            <v-text-field
+              v-model="editForm.titulo"
+              label="Titulo"
+              variant="outlined"
+              density="comfortable"
+            />
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="cerrarEditar">Cancelar</v-btn>
+          <v-btn color="primary" :loading="cargando" @click="guardarEdicion">
+            Guardar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -253,12 +309,20 @@ type ReservaTablaItem = {
 const espaciosStore = useEspaciosStore();
 
 const expandedRows = ref<string[]>([]);
+const editDialog = ref(false);
 
 const filtros = reactive({
   espacioId: null as number | null,
   categoria: "",
   fechaInicio: "",
   fechaFin: "",
+});
+
+const editForm = reactive({
+  id: null as number | null,
+  fechaInicio: "",
+  fechaFin: "",
+  titulo: "",
 });
 
 const cargando = computed(() => espaciosStore.cargando);
@@ -401,6 +465,55 @@ function limpiarFiltros() {
   filtros.fechaFin = "";
 }
 
+function toDatetimeLocal(value: string): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 16);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function sePuedeEditar(item: ReservaTablaItem): boolean {
+  const estado = item.estado.toLowerCase();
+  return estado === "pendiente" || estado === "aprobada";
+}
+
+function abrirEditar(item: ReservaTablaItem) {
+  editForm.id = item.id;
+  editForm.fechaInicio = toDatetimeLocal(item.fechaInicio);
+  editForm.fechaFin = toDatetimeLocal(item.fechaFin);
+  editForm.titulo = item.titulo;
+  editDialog.value = true;
+}
+
+function cerrarEditar() {
+  editDialog.value = false;
+  editForm.id = null;
+  editForm.fechaInicio = "";
+  editForm.fechaFin = "";
+  editForm.titulo = "";
+}
+
+async function guardarEdicion() {
+  if (!editForm.id || !editForm.fechaInicio || !editForm.fechaFin) return;
+
+  await espaciosStore.actualizarReserva(editForm.id, {
+    fechaInicio: editForm.fechaInicio,
+    fechaFin: editForm.fechaFin,
+    titulo: editForm.titulo.trim() || undefined,
+  });
+
+  if (!espaciosStore.error) {
+    cerrarEditar();
+  }
+}
+
 onMounted(async () => {
   await espaciosStore.cargarCategorias();
   await espaciosStore.cargarEspacios();
@@ -411,12 +524,17 @@ async function recargar() {
   await espaciosStore.cargarMisReservas();
 }
 
-async function borrar(id: number) {
-  if (!confirm("Seguro que quieres borrar esta reserva?")) return;
+function sePuedeCancelar(item: ReservaTablaItem): boolean {
+  const estado = item.estado.toLowerCase();
+  return estado === "pendiente" || estado === "aprobada";
+}
+
+async function cancelar(id: number) {
+  if (!confirm("Seguro que quieres cancelar esta reserva?")) return;
   expandedRows.value = expandedRows.value.filter(
     (value) => value !== String(id)
   );
-  await espaciosStore.borrarReserva(id);
+  await espaciosStore.cancelarReserva(id);
 }
 </script>
 

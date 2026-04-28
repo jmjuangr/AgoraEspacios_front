@@ -34,11 +34,11 @@ export async function apiGet<T>(url: string): Promise<T> {
 }
 
 // ---------------------------
-// POST / PUT / DELETE genérico
+// POST / PUT / PATCH / DELETE genérico
 // ---------------------------
 export async function apiSend<T>(
   url: string,
-  method: "POST" | "PUT" | "DELETE",
+  method: "POST" | "PUT" | "PATCH" | "DELETE",
   body?: unknown
 ): Promise<T> {
   const headers: HeadersInit = {

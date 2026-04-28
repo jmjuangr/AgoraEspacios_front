@@ -5,8 +5,8 @@
         <div>
           <span class="text-h6">Reservas</span>
           <p class="reservas-card__subtitle">
-            Vista de administracion para consultar y eliminar reservas de todos
-            los usuarios.
+            Vista de administracion para revisar, aprobar, rechazar o cancelar
+            reservas de todos los usuarios.
           </p>
         </div>
 
@@ -155,23 +155,98 @@
 
           <template #item.acciones="{ item }">
             <v-btn
-              icon
+              v-if="sePuedeEditar(item)"
+              size="small"
+              color="primary"
+              variant="text"
+              @click="abrirEditar(item)"
+            >
+              Editar
+            </v-btn>
+
+            <v-btn
+              v-if="estaPendiente(item)"
+              size="small"
+              color="success"
+              variant="text"
+              @click="aprobar(item.id)"
+            >
+              Aprobar
+            </v-btn>
+
+            <v-btn
+              v-if="estaPendiente(item)"
+              size="small"
+              color="warning"
+              variant="text"
+              @click="rechazar(item.id)"
+            >
+              Rechazar
+            </v-btn>
+
+            <v-btn
+              v-if="sePuedeCancelar(item)"
               size="small"
               color="error"
               variant="text"
-              @click="borrar(item.id)"
+              @click="cancelar(item.id)"
             >
-              <v-icon size="18">mdi-delete-outline</v-icon>
+              Cancelar
             </v-btn>
           </template>
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <v-dialog v-model="editDialog" max-width="520">
+      <v-card class="ag-card">
+        <v-card-title>Editar reserva</v-card-title>
+
+        <v-card-text>
+          <v-form @submit.prevent="guardarEdicion">
+            <v-text-field
+              v-model="editForm.fechaInicio"
+              label="Fecha inicio"
+              type="datetime-local"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+              required
+            />
+
+            <v-text-field
+              v-model="editForm.fechaFin"
+              label="Fecha fin"
+              type="datetime-local"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+              required
+            />
+
+            <v-text-field
+              v-model="editForm.titulo"
+              label="Titulo"
+              variant="outlined"
+              density="comfortable"
+            />
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="cerrarEditar">Cancelar</v-btn>
+          <v-btn color="primary" :loading="cargando" @click="guardarEdicion">
+            Guardar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useEspaciosStore } from "../store/espacios";
 
 type ReservaTablaItem = {
@@ -187,6 +262,7 @@ type ReservaTablaItem = {
 };
 
 const espaciosStore = useEspaciosStore();
+const editDialog = ref(false);
 
 const filtros = reactive({
   usuario: null as string | null,
@@ -194,6 +270,13 @@ const filtros = reactive({
   estado: null as string | null,
   fechaInicio: "",
   fechaFin: "",
+});
+
+const editForm = reactive({
+  id: null as number | null,
+  fechaInicio: "",
+  fechaFin: "",
+  titulo: "",
 });
 
 const cargando = computed(() => espaciosStore.cargando);
@@ -322,13 +405,81 @@ function limpiarFiltros() {
   filtros.fechaFin = "";
 }
 
+function toDatetimeLocal(value: string): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 16);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 async function recargar() {
   await espaciosStore.cargarReservasAdmin();
 }
 
-async function borrar(id: number) {
-  if (!confirm("Seguro que quieres eliminar esta reserva?")) return;
-  await espaciosStore.borrarReservaAdmin(id);
+function estaPendiente(item: ReservaTablaItem): boolean {
+  return item.estado.toLowerCase() === "pendiente";
+}
+
+function sePuedeEditar(item: ReservaTablaItem): boolean {
+  const estado = item.estado.toLowerCase();
+  return estado === "pendiente" || estado === "aprobada";
+}
+
+function sePuedeCancelar(item: ReservaTablaItem): boolean {
+  const estado = item.estado.toLowerCase();
+  return estado === "pendiente" || estado === "aprobada";
+}
+
+function abrirEditar(item: ReservaTablaItem) {
+  editForm.id = item.id;
+  editForm.fechaInicio = toDatetimeLocal(item.fechaInicio);
+  editForm.fechaFin = toDatetimeLocal(item.fechaFin);
+  editForm.titulo = item.titulo;
+  editDialog.value = true;
+}
+
+function cerrarEditar() {
+  editDialog.value = false;
+  editForm.id = null;
+  editForm.fechaInicio = "";
+  editForm.fechaFin = "";
+  editForm.titulo = "";
+}
+
+async function guardarEdicion() {
+  if (!editForm.id || !editForm.fechaInicio || !editForm.fechaFin) return;
+
+  await espaciosStore.actualizarReservaAdmin(editForm.id, {
+    fechaInicio: editForm.fechaInicio,
+    fechaFin: editForm.fechaFin,
+    titulo: editForm.titulo.trim() || undefined,
+  });
+
+  if (!espaciosStore.error) {
+    cerrarEditar();
+  }
+}
+
+async function aprobar(id: number) {
+  if (!confirm("Seguro que quieres aprobar esta reserva?")) return;
+  await espaciosStore.aprobarReservaAdmin(id);
+}
+
+async function rechazar(id: number) {
+  if (!confirm("Seguro que quieres rechazar esta reserva?")) return;
+  await espaciosStore.rechazarReservaAdmin(id);
+}
+
+async function cancelar(id: number) {
+  if (!confirm("Seguro que quieres cancelar esta reserva?")) return;
+  await espaciosStore.cancelarReservaAdmin(id);
 }
 
 onMounted(async () => {

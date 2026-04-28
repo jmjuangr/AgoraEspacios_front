@@ -96,5 +96,4 @@ export interface ReservaUpdateDTO {
   fechaInicio: string;
   fechaFin: string;
   titulo?: string;
-  estado: string;
 }

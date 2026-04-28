@@ -66,7 +66,7 @@
 import { computed } from "vue";
 
 type EstadoReserva =
-  | "Activa"
+  | "Aprobada"
   | "Pendiente"
   | "Cancelada"
   | "Rechazada"
@@ -94,7 +94,7 @@ const emit = defineEmits<{
 
 const estadoClass = computed(() => {
   const estado = props.reserva.estado.toLowerCase();
-  if (estado.includes("activa") || estado.includes("confirmada")) {
+  if (estado.includes("aprobada")) {
     return "success";
   }
   if (estado.includes("pendiente")) {
@@ -108,7 +108,7 @@ const estadoClass = computed(() => {
 
 const sePuedeCancelar = computed(() => {
   const e = props.reserva.estado.toLowerCase();
-  return e.includes("activa") || e.includes("pendiente");
+  return e.includes("aprobada") || e.includes("pendiente");
 });
 
 const onVerEspacio = () => {
