@@ -257,7 +257,7 @@ const handleReservar = (id: number) => {
 @import "@/assets/styles/_mixins.scss";
 
 .espacios-container {
-  margin-top: $spacing-10 + $spacing-2;
+  @include ag-page-container;
 }
 
 .espacios-header {

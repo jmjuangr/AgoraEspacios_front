@@ -492,7 +492,7 @@ onMounted(async () => {
 @import "@/assets/styles/_mixins.scss";
 
 .reservas-container {
-  margin-top: $spacing-10 + $spacing-2;
+  @include ag-page-container;
 }
 
 .reservas-card {
