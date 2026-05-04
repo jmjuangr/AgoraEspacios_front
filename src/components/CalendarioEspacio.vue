@@ -59,6 +59,9 @@
         :class="{
           'is-outside': !day.inCurrentMonth,
           'is-selected': day.isSelected,
+          'is-range-start': day.isRangeStart,
+          'is-range-end': day.isRangeEnd,
+          'is-in-range': day.isInRange,
           'is-today': day.isToday,
           'is-blocked': day.blockedCount > 0,
         }"
@@ -80,7 +83,7 @@
       <v-list v-if="reservasDelDia.length" density="compact" class="listado-dia">
         <v-list-item v-for="reserva in reservasDelDia" :key="reserva.id">
           <v-list-item-title>
-            {{ formatearHora(reserva.fechaInicio) }} - {{ formatearHora(reserva.fechaFin) }}
+            {{ formatearRangoReserva(reserva) }}
           </v-list-item-title>
           <v-list-item-subtitle>
             {{ reserva.titulo || "Reserva sin titulo" }}
@@ -100,19 +103,19 @@
 
       <v-form @submit.prevent="crearReserva">
         <v-row>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <v-text-field
-              :model-value="selectedDate"
-              label="Fecha"
+              v-model="form.fechaInicio"
+              label="Fecha inicio"
               type="date"
               variant="outlined"
               density="comfortable"
               hide-details="auto"
-              @update:model-value="seleccionarDia"
+              @update:model-value="seleccionarFechaInicio"
             />
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <v-text-field
               v-model="form.horaInicio"
               label="Hora inicio"
@@ -123,7 +126,18 @@
             />
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="form.fechaFin"
+              label="Fecha fin"
+              type="date"
+              variant="outlined"
+              density="comfortable"
+              hide-details="auto"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
             <v-text-field
               v-model="form.horaFin"
               label="Hora fin"
@@ -187,12 +201,15 @@ const espaciosStore = useEspaciosStore();
 const now = new Date();
 const selectedDate = ref(formatISODate(now));
 const monthCursor = ref(new Date(now.getFullYear(), now.getMonth(), 1));
+const seleccionandoFin = ref(false);
 const enviando = ref(false);
 const formError = ref("");
 const formSuccess = ref("");
 
 const form = reactive({
+  fechaInicio: selectedDate.value,
   horaInicio: "09:00",
+  fechaFin: selectedDate.value,
   horaFin: "10:00",
   titulo: "",
 });
@@ -233,6 +250,9 @@ const diasCalendario = computed(() => {
     day: number;
     inCurrentMonth: boolean;
     isSelected: boolean;
+    isRangeStart: boolean;
+    isRangeEnd: boolean;
+    isInRange: boolean;
     isToday: boolean;
     blockedCount: number;
   }> = [];
@@ -248,6 +268,12 @@ const diasCalendario = computed(() => {
       day: current.getDate(),
       inCurrentMonth: current.getMonth() === monthCursor.value.getMonth(),
       isSelected: iso === selectedDate.value,
+      isRangeStart: iso === form.fechaInicio,
+      isRangeEnd: iso === form.fechaFin && form.fechaFin !== form.fechaInicio,
+      isInRange:
+        Boolean(form.fechaInicio && form.fechaFin) &&
+        iso > form.fechaInicio &&
+        iso < form.fechaFin,
       isToday: iso === todayIso,
       blockedCount,
     });
@@ -300,6 +326,21 @@ function seleccionarDia(value: string | null) {
 
   selectedDate.value = value;
 
+  if (!seleccionandoFin.value) {
+    form.fechaInicio = value;
+    form.fechaFin = value;
+    seleccionandoFin.value = true;
+  } else {
+    if (value < form.fechaInicio) {
+      form.fechaFin = form.fechaInicio;
+      form.fechaInicio = value;
+    } else {
+      form.fechaFin = value;
+    }
+
+    seleccionandoFin.value = false;
+  }
+
   const [yearText, monthText] = value.split("-");
   const year = Number(yearText);
   const month = Number(monthText);
@@ -307,6 +348,19 @@ function seleccionarDia(value: string | null) {
   if (!Number.isNaN(year) && !Number.isNaN(month) && month >= 1 && month <= 12) {
     monthCursor.value = new Date(year, month - 1, 1);
   }
+}
+
+function seleccionarFechaInicio(value: string | null) {
+  if (!value) return;
+
+  selectedDate.value = value;
+  form.fechaInicio = value;
+
+  if (!form.fechaFin || form.fechaFin < value) {
+    form.fechaFin = value;
+  }
+
+  seleccionandoFin.value = true;
 }
 
 function mesAnterior() {
@@ -345,6 +399,32 @@ function formatearHora(value: string): string {
   });
 }
 
+function formatearFechaHora(value: string): string {
+  const d = new Date(value);
+  return d.toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatearRangoReserva(reserva: ReservaDTO): string {
+  const inicioFecha = formatISODate(new Date(reserva.fechaInicio));
+  const finFecha = formatISODate(new Date(reserva.fechaFin));
+
+  if (inicioFecha === finFecha) {
+    return `${formatearHora(reserva.fechaInicio)} - ${formatearHora(
+      reserva.fechaFin
+    )}`;
+  }
+
+  return `${formatearFechaHora(reserva.fechaInicio)} - ${formatearFechaHora(
+    reserva.fechaFin
+  )}`;
+}
+
 function reservasEnDia(isoDate: string): ReservaDTO[] {
   const inicioDia = new Date(`${isoDate}T00:00:00`);
   const finDiaExclusivo = new Date(inicioDia);
@@ -380,13 +460,13 @@ async function crearReserva() {
   formError.value = "";
   formSuccess.value = "";
 
-  if (!selectedDate.value || !form.horaInicio || !form.horaFin) {
-    formError.value = "Debes indicar fecha y rango horario.";
+  if (!form.fechaInicio || !form.horaInicio || !form.fechaFin || !form.horaFin) {
+    formError.value = "Debes indicar fecha y hora de inicio y fin.";
     return;
   }
 
-  const fechaInicio = `${selectedDate.value}T${form.horaInicio}`;
-  const fechaFin = `${selectedDate.value}T${form.horaFin}`;
+  const fechaInicio = `${form.fechaInicio}T${form.horaInicio}`;
+  const fechaFin = `${form.fechaFin}T${form.horaFin}`;
   const inicio = new Date(fechaInicio);
   const fin = new Date(fechaFin);
 
@@ -396,7 +476,7 @@ async function crearReserva() {
   }
 
   if (inicio >= fin) {
-    formError.value = "La hora de fin debe ser posterior a la de inicio.";
+    formError.value = "La fecha y hora de fin debe ser posterior a la de inicio.";
     return;
   }
 
@@ -521,6 +601,18 @@ async function crearReserva() {
   }
 
   &.is-selected {
+    border-color: $color-primary;
+    background-color: $color-primary-soft;
+    color: $color-background;
+  }
+
+  &.is-in-range {
+    border-color: rgba($color-primary, 0.45);
+    background-color: rgba($color-primary, 0.16);
+  }
+
+  &.is-range-start,
+  &.is-range-end {
     border-color: $color-primary;
     background-color: $color-primary-soft;
     color: $color-background;

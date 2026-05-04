@@ -395,6 +395,6 @@ const resetEspacioForm = () => {
 }
 
 .admin-container {
-  margin-top: $spacing-10 + $spacing-2;
+  @include ag-page-container;
 }
 </style>

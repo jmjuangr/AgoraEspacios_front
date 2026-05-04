@@ -29,6 +29,11 @@
   gap: $gap;
 }
 
+// Mixin para separar las vistas principales del header fijo
+@mixin ag-page-container {
+  margin-top: $spacing-10 + $spacing-2;
+}
+
 // Mixin para el header de tarjeta/sección
 @mixin ag-card-header {
   display: flex;
