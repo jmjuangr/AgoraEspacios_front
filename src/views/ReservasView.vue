@@ -153,6 +153,10 @@
             </div>
           </template>
 
+          <template #item.fechaCreacion="{ item }">
+            {{ formatearFechaHora(item.fechaCreacion) }}
+          </template>
+
           <template #item.acciones="{ item }">
             <v-btn
               v-if="sePuedeEditar(item)"
@@ -199,7 +203,7 @@
     </v-card>
 
     <v-dialog v-model="editDialog" max-width="520">
-      <v-card class="ag-card">
+      <v-card class="ag-card reserva-edit-dialog">
         <v-card-title>Editar reserva</v-card-title>
 
         <v-card-text>
@@ -235,7 +239,13 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="cerrarEditar">Cancelar</v-btn>
+          <v-btn
+            class="reserva-edit-dialog__cancel"
+            variant="text"
+            @click="cerrarEditar"
+          >
+            Cancelar
+          </v-btn>
           <v-btn color="primary" :loading="cargando" @click="guardarEdicion">
             Guardar
           </v-btn>
@@ -258,6 +268,7 @@ type ReservaTablaItem = {
   titulo: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaCreacion: string;
   estado: string;
 };
 
@@ -288,6 +299,7 @@ const headers = [
   { title: "Espacio", value: "espacio" },
   { title: "Titulo", value: "titulo" },
   { title: "Rango", value: "rango" },
+  { title: "Creada", value: "fechaCreacion" },
   { title: "Estado", value: "estado" },
   { title: "Acciones", value: "acciones", sortable: false },
 ];
@@ -318,6 +330,7 @@ const reservasTabla = computed<ReservaTablaItem[]>(() =>
       titulo: r.titulo ?? r.Titulo ?? "",
       fechaInicio: r.fechaInicio ?? r.FechaInicio,
       fechaFin: r.fechaFin ?? r.FechaFin,
+      fechaCreacion: r.fechaCreacion ?? r.FechaCreacion ?? "",
       estado: r.estado ?? r.Estado ?? "",
     };
   })
@@ -433,8 +446,7 @@ function sePuedeEditar(item: ReservaTablaItem): boolean {
 }
 
 function sePuedeCancelar(item: ReservaTablaItem): boolean {
-  const estado = item.estado.toLowerCase();
-  return estado === "pendiente" || estado === "aprobada";
+  return item.estado.toLowerCase() === "aprobada";
 }
 
 function abrirEditar(item: ReservaTablaItem) {
@@ -559,6 +571,32 @@ onMounted(async () => {
 
 .reservas__rango-separador {
   opacity: 0.7;
+}
+
+.reserva-edit-dialog {
+  @include ag-card($spacing-4);
+
+  ::v-deep(.v-card-title) {
+    color: $color-heading;
+    font-weight: 600;
+  }
+
+  ::v-deep(.v-card-actions) {
+    border-top: 1px solid $color-border;
+  }
+
+  ::v-deep(.v-label),
+  ::v-deep(.v-field input) {
+    color: $color-heading;
+  }
+
+  ::v-deep(.v-field) {
+    background-color: $color-background-mute;
+  }
+}
+
+.reserva-edit-dialog__cancel {
+  color: $color-text;
 }
 
 .ag-btn-secondary {

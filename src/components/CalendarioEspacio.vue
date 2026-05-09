@@ -316,6 +316,7 @@ function normalizarReserva(r: any): ReservaDTO | null {
     usuarioNombre: r.usuarioNombre ?? r.UsuarioNombre ?? "",
     fechaInicio,
     fechaFin,
+    fechaCreacion: r.fechaCreacion ?? r.FechaCreacion ?? "",
     estado: r.estado ?? r.Estado ?? "",
     titulo: r.titulo ?? r.Titulo ?? "",
   };

@@ -81,6 +81,7 @@ export interface ReservaDTO {
   usuarioNombre: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaCreacion: string;
   estado: string;
   titulo: string;
 }

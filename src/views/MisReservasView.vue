@@ -125,6 +125,10 @@
               </div>
             </template>
 
+            <template #item.fechaCreacion="{ item }">
+              {{ formatearFechaHora(item.fechaCreacion) }}
+            </template>
+
             <template #item.detalles="{ item }">
               <v-btn
                 size="small"
@@ -149,13 +153,12 @@
 
               <v-btn
                 v-if="sePuedeCancelar(item)"
-                icon
                 size="small"
                 color="error"
                 variant="text"
                 @click="cancelar(item.id)"
               >
-                <v-icon size="18">mdi-cancel</v-icon>
+                Cancelar
               </v-btn>
             </template>
 
@@ -243,7 +246,7 @@
     </v-card>
 
     <v-dialog v-model="editDialog" max-width="520">
-      <v-card class="ag-card">
+      <v-card class="ag-card reserva-edit-dialog">
         <v-card-title>Editar reserva</v-card-title>
 
         <v-card-text>
@@ -279,7 +282,13 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="cerrarEditar">Cancelar</v-btn>
+          <v-btn
+            class="reserva-edit-dialog__cancel"
+            variant="text"
+            @click="cerrarEditar"
+          >
+            Cancelar
+          </v-btn>
           <v-btn color="primary" :loading="cargando" @click="guardarEdicion">
             Guardar
           </v-btn>
@@ -303,6 +312,7 @@ type ReservaTablaItem = {
   titulo: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaCreacion: string;
   estado: string;
 };
 
@@ -334,6 +344,7 @@ const headers = [
   { title: "Espacio", value: "espacioNombre" },
   { title: "Titulo", value: "titulo" },
   { title: "Rango", value: "rango" },
+  { title: "Creada", value: "fechaCreacion" },
   { title: "Estado", value: "estado" },
   { title: "Detalles", value: "detalles", sortable: false },
   { title: "Acciones", value: "acciones", sortable: false },
@@ -360,6 +371,7 @@ const reservasTabla = computed<ReservaTablaItem[]>(() =>
       titulo: r.titulo ?? r.Titulo ?? "",
       fechaInicio: r.fechaInicio ?? r.FechaInicio,
       fechaFin: r.fechaFin ?? r.FechaFin,
+      fechaCreacion: r.fechaCreacion ?? r.FechaCreacion ?? "",
       estado: r.estado ?? r.Estado ?? "",
     };
   })
@@ -661,6 +673,32 @@ async function cancelar(id: number) {
   margin: 0;
   font-size: 0.9rem;
   color: $color-text-muted;
+}
+
+.reserva-edit-dialog {
+  @include ag-card($spacing-4);
+
+  ::v-deep(.v-card-title) {
+    color: $color-heading;
+    font-weight: 600;
+  }
+
+  ::v-deep(.v-card-actions) {
+    border-top: 1px solid $color-border;
+  }
+
+  ::v-deep(.v-label),
+  ::v-deep(.v-field input) {
+    color: $color-heading;
+  }
+
+  ::v-deep(.v-field) {
+    background-color: $color-background-mute;
+  }
+}
+
+.reserva-edit-dialog__cancel {
+  color: $color-text;
 }
 
 .ag-btn-secondary {
