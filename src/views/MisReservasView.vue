@@ -113,7 +113,7 @@
             v-else
             :items="reservasFiltradas"
             :headers="headers"
-            :expanded="expandedRows"
+            :expanded="filasAbiertas"
             item-value="rowKey"
             density="comfortable"
           >
@@ -136,7 +136,7 @@
                 class="ag-btn-secondary"
                 @click="toggleDetalles(item.rowKey)"
               >
-                {{ isExpanded(item.rowKey) ? "Ocultar" : "+ Detalles" }}
+                {{ estaAbierta(item.rowKey) ? "Ocultar" : "+ Detalles" }}
               </v-btn>
             </template>
 
@@ -164,10 +164,13 @@
 
             <template #expanded-row="{ columns, item }">
               <tr>
-                <td :colspan="columns.length" class="mis-reservas__expanded-cell">
+                <td
+                  :colspan="columns.length"
+                  class="mis-reservas__expanded-cell"
+                >
                   <v-expand-transition>
                     <div
-                      v-if="isExpanded(item.rowKey)"
+                      v-if="estaAbierta(item.rowKey)"
                       class="mis-reservas__detalle-sala"
                     >
                       <div
@@ -191,7 +194,10 @@
 
                       <div class="mis-reservas__detalle-body">
                         <div class="mis-reservas__detalle-title">
-                          {{ getEspacioReserva(item)?.nombre || item.espacioNombre }}
+                          {{
+                            getEspacioReserva(item)?.nombre ||
+                            item.espacioNombre
+                          }}
                         </div>
                         <div class="mis-reservas__detalle-category">
                           {{
@@ -245,14 +251,14 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="editDialog" max-width="520">
+    <v-dialog v-model="dialogoEditar" max-width="520">
       <v-card class="ag-card reserva-edit-dialog">
         <v-card-title>Editar reserva</v-card-title>
 
         <v-card-text>
           <v-form @submit.prevent="guardarEdicion">
             <v-text-field
-              v-model="editForm.fechaInicio"
+              v-model="formularioEditar.fechaInicio"
               label="Fecha inicio"
               type="datetime-local"
               variant="outlined"
@@ -262,7 +268,7 @@
             />
 
             <v-text-field
-              v-model="editForm.fechaFin"
+              v-model="formularioEditar.fechaFin"
               label="Fecha fin"
               type="datetime-local"
               variant="outlined"
@@ -272,7 +278,7 @@
             />
 
             <v-text-field
-              v-model="editForm.titulo"
+              v-model="formularioEditar.titulo"
               label="Titulo"
               variant="outlined"
               density="comfortable"
@@ -303,7 +309,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useEspaciosStore } from "../store/espacios";
 import type { EspacioDTO } from "../types/agora";
 
-type ReservaTablaItem = {
+type ReservaTabla = {
   id: number;
   rowKey: string;
   espacioId: number;
@@ -318,9 +324,10 @@ type ReservaTablaItem = {
 
 const espaciosStore = useEspaciosStore();
 
-const expandedRows = ref<string[]>([]);
-const editDialog = ref(false);
+const filasAbiertas = ref<string[]>([]);
+const dialogoEditar = ref(false);
 
+// Filtros reservas
 const filtros = reactive({
   espacioId: null as number | null,
   categoria: "",
@@ -328,18 +335,21 @@ const filtros = reactive({
   fechaFin: "",
 });
 
-const editForm = reactive({
+// formulario  para editar una reserva
+const formularioEditar = reactive({
   id: null as number | null,
   fechaInicio: "",
   fechaFin: "",
   titulo: "",
 });
 
+// valores cargaddos del store
 const cargando = computed(() => espaciosStore.cargando);
 const error = computed(() => espaciosStore.error);
 const reservas = computed(() => espaciosStore.reservasUsuario);
 const espaciosOptions = computed(() => espaciosStore.espacios);
 
+// columnas tabla reservas
 const headers = [
   { title: "Espacio", value: "espacioNombre" },
   { title: "Titulo", value: "titulo" },
@@ -350,7 +360,8 @@ const headers = [
   { title: "Acciones", value: "acciones", sortable: false },
 ];
 
-const reservasTabla = computed<ReservaTablaItem[]>(() =>
+// normalizar campos
+const reservasTabla = computed<ReservaTabla[]>(() =>
   reservas.value.map((r: any) => {
     const espacioId = r.espacioId ?? r.EspacioId ?? 0;
     const espacio = espaciosStore.espacios.find((e) => e.id === espacioId);
@@ -374,9 +385,10 @@ const reservasTabla = computed<ReservaTablaItem[]>(() =>
       fechaCreacion: r.fechaCreacion ?? r.FechaCreacion ?? "",
       estado: r.estado ?? r.Estado ?? "",
     };
-  })
+  }),
 );
 
+// segun reservas cargadas se muestran categorias
 const categoriasOptions = computed(() => {
   const categorias = new Set<string>();
 
@@ -389,6 +401,7 @@ const categoriasOptions = computed(() => {
   return Array.from(categorias).sort((a, b) => a.localeCompare(b));
 });
 
+// devuelve reservas con los filtros seleccionados
 const reservasFiltradas = computed(() =>
   reservasTabla.value.filter((reserva) => {
     const coincideEspacio = filtros.espacioId
@@ -416,7 +429,7 @@ const reservasFiltradas = computed(() =>
       coincideFechaInicio &&
       coincideFechaFin
     );
-  })
+  }),
 );
 
 const hayFiltrosActivos = computed(
@@ -424,14 +437,16 @@ const hayFiltrosActivos = computed(
     filtros.espacioId !== null ||
     filtros.categoria.trim().length > 0 ||
     filtros.fechaInicio.length > 0 ||
-    filtros.fechaFin.length > 0
+    filtros.fechaFin.length > 0,
 );
 
+// obtener fecha y hora
 function extraerFecha(valor: string): string {
   if (!valor) return "";
   return valor.slice(0, 10);
 }
 
+// Formatea fecha
 function formatearFechaHora(valor: string | Date): string {
   if (!valor) return "";
   const d = new Date(valor);
@@ -442,34 +457,39 @@ function formatearFechaHora(valor: string | Date): string {
   });
 }
 
-function getEspacioReserva(item: ReservaTablaItem): EspacioDTO | undefined {
+// Busca espacio asociado  a reserva
+function getEspacioReserva(item: ReservaTabla): EspacioDTO | undefined {
   return espaciosStore.espacios.find((e) => e.id === item.espacioId);
 }
 
+// devuelve nombre de la categoria del espacio
 function getCategoriaEspacio(espacio?: EspacioDTO): string {
   if (!espacio) return "";
   if (espacio.categoriaNombre?.trim()) return espacio.categoriaNombre;
 
   const categoria = espaciosStore.categorias.find(
-    (c) => c.id === espacio.categoriaEspacioId
+    (c) => c.id === espacio.categoriaEspacioId,
   );
 
   return categoria?.nombre ?? "";
 }
 
-function isExpanded(rowKey: string): boolean {
-  return expandedRows.value.includes(rowKey);
+// comprobar si fila está desplegad
+function estaAbierta(rowKey: string): boolean {
+  return filasAbiertas.value.includes(rowKey);
 }
 
+// Abreir/cerrar detalles de fila
 function toggleDetalles(rowKey: string) {
-  if (isExpanded(rowKey)) {
-    expandedRows.value = expandedRows.value.filter((value) => value !== rowKey);
+  if (estaAbierta(rowKey)) {
+    filasAbiertas.value = filasAbiertas.value.filter((value) => value !== rowKey);
     return;
   }
 
-  expandedRows.value = [...expandedRows.value, rowKey];
+  filasAbiertas.value = [...filasAbiertas.value, rowKey];
 }
 
+// limpiar filtros
 function limpiarFiltros() {
   filtros.espacioId = null;
   filtros.categoria = "";
@@ -477,6 +497,7 @@ function limpiarFiltros() {
   filtros.fechaFin = "";
 }
 
+// adaptar fecha
 function toDatetimeLocal(value: string): string {
   if (!value) return "";
   const date = new Date(value);
@@ -491,34 +512,38 @@ function toDatetimeLocal(value: string): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-function sePuedeEditar(item: ReservaTablaItem): boolean {
+// se puede o no editar reserva, segun su estado
+function sePuedeEditar(item: ReservaTabla): boolean {
   const estado = item.estado.toLowerCase();
   return estado === "pendiente" || estado === "aprobada";
 }
 
-function abrirEditar(item: ReservaTablaItem) {
-  editForm.id = item.id;
-  editForm.fechaInicio = toDatetimeLocal(item.fechaInicio);
-  editForm.fechaFin = toDatetimeLocal(item.fechaFin);
-  editForm.titulo = item.titulo;
-  editDialog.value = true;
+// Carga los datos de la reserva en el formulario para editar
+function abrirEditar(item: ReservaTabla) {
+  formularioEditar.id = item.id;
+  formularioEditar.fechaInicio = toDatetimeLocal(item.fechaInicio);
+  formularioEditar.fechaFin = toDatetimeLocal(item.fechaFin);
+  formularioEditar.titulo = item.titulo;
+  dialogoEditar.value = true;
 }
 
+// cerrar y limpiar edicion
 function cerrarEditar() {
-  editDialog.value = false;
-  editForm.id = null;
-  editForm.fechaInicio = "";
-  editForm.fechaFin = "";
-  editForm.titulo = "";
+  dialogoEditar.value = false;
+  formularioEditar.id = null;
+  formularioEditar.fechaInicio = "";
+  formularioEditar.fechaFin = "";
+  formularioEditar.titulo = "";
 }
 
+// Guarda datos editados
 async function guardarEdicion() {
-  if (!editForm.id || !editForm.fechaInicio || !editForm.fechaFin) return;
+  if (!formularioEditar.id || !formularioEditar.fechaInicio || !formularioEditar.fechaFin) return;
 
-  await espaciosStore.actualizarReserva(editForm.id, {
-    fechaInicio: editForm.fechaInicio,
-    fechaFin: editForm.fechaFin,
-    titulo: editForm.titulo.trim() || undefined,
+  await espaciosStore.actualizarReserva(formularioEditar.id, {
+    fechaInicio: formularioEditar.fechaInicio,
+    fechaFin: formularioEditar.fechaFin,
+    titulo: formularioEditar.titulo.trim() || undefined,
   });
 
   if (!espaciosStore.error) {
@@ -526,25 +551,29 @@ async function guardarEdicion() {
   }
 }
 
+// Carga los datos al entrar
 onMounted(async () => {
   await espaciosStore.cargarCategorias();
   await espaciosStore.cargarEspacios();
   await espaciosStore.cargarMisReservas();
 });
 
+// recargar reservas usuario
 async function recargar() {
   await espaciosStore.cargarMisReservas();
 }
 
-function sePuedeCancelar(item: ReservaTablaItem): boolean {
+// cancelar reservas pendientes o aprobadas
+function sePuedeCancelar(item: ReservaTabla): boolean {
   const estado = item.estado.toLowerCase();
   return estado === "pendiente" || estado === "aprobada";
 }
 
+// cancela la reserva seleccionada (mensaje)
 async function cancelar(id: number) {
   if (!confirm("Seguro que quieres cancelar esta reserva?")) return;
-  expandedRows.value = expandedRows.value.filter(
-    (value) => value !== String(id)
+  filasAbiertas.value = filasAbiertas.value.filter(
+    (value) => value !== String(id),
   );
   await espaciosStore.cancelarReserva(id);
 }

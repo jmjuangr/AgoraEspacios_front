@@ -14,6 +14,7 @@ import type {
 } from "../types/agora";
 
 export const useEspaciosStore = defineStore("espacios", {
+  // datos principales de espacios, categorias y reservas
   state: () => ({
     categorias: [] as CategoriaEspacioDTO[],
     espacios: [] as EspacioDTO[],
@@ -25,20 +26,21 @@ export const useEspaciosStore = defineStore("espacios", {
   }),
 
   actions: {
+    // guardo error
     setError(msg: string) {
       this.error = msg;
       console.error(msg);
     },
 
-    // ---------- CATEGORÍAS ----------
+    // CATEGORÍAS
+    // Carga todas las categorias desde la API
     async cargarCategorias() {
       this.cargando = true;
       this.error = "";
       try {
-        // Ajusta la ruta si tu controlador usa otro nombre
-        this.categorias = await apiGet<CategoriaEspacioDTO[]>(
-          "/categoriaespacio"
-        );
+        // ajuste de ruta
+        this.categorias =
+          await apiGet<CategoriaEspacioDTO[]>("/categoriaespacio");
       } catch (err: any) {
         this.setError(err.message || "Error al cargar categorías");
       } finally {
@@ -46,6 +48,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Crea una categoria nueva y recarga el listado para verlo actualizado
     async crearCategoria(dto: CategoriaEspacioCreateDTO) {
       this.error = "";
       try {
@@ -56,13 +59,14 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Actualiza una categoria existente usando id
     async actualizarCategoria(id: number, dto: CategoriaEspacioUpdateDTO) {
       this.error = "";
       try {
         await apiSend<CategoriaEspacioDTO>(
           `/categoriaespacio/${id}`,
           "PUT",
-          dto
+          dto,
         );
         await this.cargarCategorias();
       } catch (err: any) {
@@ -70,6 +74,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Borra una categoria y refrescar
     async borrarCategoria(id: number) {
       this.error = "";
       try {
@@ -80,7 +85,8 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
-    // ---------- ESPACIOS ----------
+    // ESPACIOS
+    // Carga todos los espacios disponibles
     async cargarEspacios() {
       this.cargando = true;
       this.error = "";
@@ -93,6 +99,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Crea un espacio nuevo
     async crearEspacio(dto: EspacioCreateDTO) {
       this.error = "";
       try {
@@ -103,6 +110,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // modifcar datos de espacio
     async actualizarEspacio(id: number, dto: EspacioUpdateDTO) {
       this.error = "";
       try {
@@ -113,6 +121,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Elimina un espacio por id y recarga la lista
     async borrarEspacio(id: number) {
       this.error = "";
       try {
@@ -123,12 +132,13 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
-    // ---------- RESERVAS ----------
+    // RESERVAS
+    // Carga las reservas del usuario que ha iniciado sesion
     async cargarMisReservas() {
       this.cargando = true;
       this.error = "";
       try {
-        // Ajusta la ruta al endpoint real (por ejemplo /reservas/mis)
+        // Ajusta la ruta
         this.reservasUsuario = await apiGet<ReservaDTO[]>("/reservas/mias");
       } catch (err: any) {
         this.setError(err.message || "Error al cargar mis reservas");
@@ -137,6 +147,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Carga todas las reservas para la vista de admin
     async cargarReservasAdmin() {
       this.cargando = true;
       this.error = "";
@@ -149,12 +160,13 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Carga las reservas de un espacio  para pintar calendario
     async cargarReservasPorEspacio(espacioId: number) {
       this.cargando = true;
       this.error = "";
       try {
         this.reservasEspacio = await apiGet<ReservaDTO[]>(
-          `/reservas/espacio/${espacioId}`
+          `/reservas/espacio/${espacioId}`,
         );
       } catch (err: any) {
         this.setError(err.message || "Error al cargar reservas del espacio");
@@ -163,6 +175,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Crea una reserva nueva y actualiza el listado personal del usuario
     async crearReserva(dto: ReservaCreateDTO) {
       this.error = "";
       try {
@@ -173,6 +186,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Actualiza una reserva propia del usuario
     async actualizarReserva(id: number, dto: ReservaUpdateDTO) {
       this.error = "";
       try {
@@ -183,6 +197,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Actualiza una reserva desde admin y refrescar
     async actualizarReservaAdmin(id: number, dto: ReservaUpdateDTO) {
       this.error = "";
       try {
@@ -193,6 +208,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Cancelar una reserva propia del usuario
     async cancelarReserva(id: number) {
       this.error = "";
       try {
@@ -203,6 +219,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Cancelar una reserva desde la pantalla de admin
     async cancelarReservaAdmin(id: number) {
       this.error = "";
       try {
@@ -213,6 +230,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Marca una reserva como aprobada desde admin
     async aprobarReservaAdmin(id: number) {
       this.error = "";
       try {
@@ -223,6 +241,7 @@ export const useEspaciosStore = defineStore("espacios", {
       }
     },
 
+    // Marca una reserva como rechazada desde admin
     async rechazarReservaAdmin(id: number) {
       this.error = "";
       try {

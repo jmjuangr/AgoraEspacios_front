@@ -1,6 +1,5 @@
 <template>
   <v-app-bar density="comfortable" class="ag-header" flat theme="dark">
-    <!-- Marca / título -->
     <div class="ag-header__brand" @click="goHome">
       <div class="ag-header__logo">
         <v-icon size="22">mdi-city-variant-outline</v-icon>
@@ -15,7 +14,7 @@
 
     <v-spacer />
 
-    <!-- Navegación cuando estoy logueado -->
+    <!-- navegacion con hay login -->
     <div v-if="isLoggedIn" class="ag-header__nav">
       <v-btn
         variant="text"
@@ -72,7 +71,6 @@
 
     <v-spacer />
 
-    <!-- Zona derecha: usuario / logout -->
     <div class="ag-header__right">
       <div v-if="isLoggedIn" class="ag-header__user">
         <v-icon size="20" class="mr-1">mdi-account-circle-outline</v-icon>
@@ -90,7 +88,6 @@
       >
         {{ $t("header.logout") }}
       </v-btn>
-      <!-- 👉 Si no estoy logueado, aquí ya no hay nada -->
     </div>
   </v-app-bar>
 </template>
@@ -104,8 +101,10 @@ const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
 
+// estado de autenticación
 const isLoggedIn = computed(() => auth.isAuthenticated);
 const isAdmin = computed(() => auth.isAdmin);
+// Nombre que se muestra en pantalla; si falta el nombre se usa el email.
 const displayName = computed(() => auth.nombre || auth.email || "Invitado");
 
 const goHome = () => {
@@ -116,6 +115,7 @@ const goHome = () => {
   }
 };
 
+// Navegacion
 const goTo = (path: string) => {
   router.push(path);
 };
@@ -123,6 +123,7 @@ const goTo = (path: string) => {
 const isActiveRoute = (path: string) =>
   route.path === path || route.path.startsWith(`${path}/`);
 
+// Cierra sesion y vuelve al login
 const handleLogout = () => {
   auth.logout();
   router.push("/login");

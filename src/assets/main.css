@@ -8,7 +8,7 @@
   font-weight: normal;
 }
 
-/* Enlaces con acento tecnológico */
+/* estilo general de enlaces */
 a,
 .green {
   text-decoration: none;
@@ -20,12 +20,12 @@ a,
 
 @media (hover: hover) {
   a:hover {
-    background-color: rgba(6, 182, 212, 0.12); /* color-accent suavizado */
+    background-color: rgba(6, 182, 212, 0.12); /* color de hover mas suave */
     color: var(--color-primary);
   }
 }
 
-/* Layout responsive / centrado similar al proyecto original */
+/* ajustes de estilo para pantalla grande */
 @media (min-width: 1024px) {
   body {
     display: block;
@@ -38,7 +38,7 @@ a,
   }
 }
 
-/* Contraste global para tarjetas del proyecto */
+/* Ajuste del color de texto dentro de las tarjetas */
 .ag-card,
 .ag-card .v-card-title,
 .ag-card .v-card-subtitle,
@@ -48,6 +48,7 @@ a,
   color: var(--ag-card-text) !important;
 }
 
+/* Color un pcoo mass suave para otros textos que son secundarios, etiquetas y mensajes que están dentro de las cards */
 .ag-card .text-disabled,
 .ag-card .text-caption,
 .ag-card .v-messages__message,
@@ -55,22 +56,23 @@ a,
   color: var(--ag-card-text-muted) !important;
 }
 
-/* Campos con fondo oscuro para evitar blancos fuertes sobre tarjetas */
+/* Fondo oscuro para los campos de formulario dentro de las tarjetas */
 .ag-card .v-field {
   background-color: var(--ag-card-field-bg) !important;
   border-radius: 10px;
 }
 
+/* Color del borde de los campos tipo outlined de Vuetify */
 .ag-card .v-field--variant-outlined .v-field__outline {
   color: var(--ag-card-field-border) !important;
 }
-
+/* Color del texto que se escribe dentro de inputs y textareas */
 .ag-card .v-field input,
 .ag-card .v-field textarea,
 .ag-card .v-field .v-field__input {
   color: var(--ag-card-text) !important;
 }
-
+/* Color de los iconos dentro de tarjetas, botones y tablas */
 .ag-card .v-field .v-icon,
 .ag-card .v-btn--variant-text .v-icon,
 .ag-card .v-btn--variant-outlined .v-icon,
@@ -79,6 +81,7 @@ a,
   opacity: 1 !important;
 }
 
+/* Ajuste para que los iconos del calendario y la hora se vean bien en tema oscuro */
 .ag-card input[type="date"]::-webkit-calendar-picker-indicator,
 .ag-card input[type="time"]::-webkit-calendar-picker-indicator,
 .ag-card input[type="datetime-local"]::-webkit-calendar-picker-indicator {
@@ -87,6 +90,7 @@ a,
   cursor: pointer;
 }
 
+/* Mantiene el color propio de los iconos cuando representan estados */
 .ag-card .text-success .v-icon,
 .ag-card .text-warning .v-icon,
 .ag-card .text-error .v-icon,
@@ -100,10 +104,12 @@ a,
   color: inherit !important;
 }
 
+/* Color del texto seleccionado dentro de los select */
 .ag-card .v-select__selection {
   color: var(--ag-card-text) !important;
 }
 
+/* Fondo transparente para tablas dentro de las tarjetas */
 .ag-card .v-table,
 .ag-card .v-table__wrapper,
 .ag-card .v-data-table__wrapper,

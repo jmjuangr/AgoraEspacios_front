@@ -65,6 +65,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+// Estados que puede tener una reserva
+// hay un string adicional por si backend devuelve algo distinto
 type EstadoReserva =
   | "Aprobada"
   | "Pendiente"
@@ -72,6 +74,7 @@ type EstadoReserva =
   | "Rechazada"
   | string;
 
+// tipo que uso en esta tarjeta con los datos necesarios para mostrar una reserva
 interface ReservaCard {
   id: number;
   espacioId: number;
@@ -87,11 +90,13 @@ const props = defineProps<{
   mostrarVerEspacio?: boolean;
 }>();
 
+//  Eventos que se envian a la vista padre cuando el usuario pulsa algún boton
 const emit = defineEmits<{
   (e: "ver-espacio", espacioId: number): void;
   (e: "cancelar", reservaId: number): void;
 }>();
 
+// segun estado de reserva se cambia el color de la etiqueta
 const estadoClass = computed(() => {
   const estado = props.reserva.estado.toLowerCase();
   if (estado.includes("aprobada")) {
@@ -106,15 +111,18 @@ const estadoClass = computed(() => {
   return "";
 });
 
+//Solo dejo cancelar las reservas que están aprobadas o pendiente
 const sePuedeCancelar = computed(() => {
   const e = props.reserva.estado.toLowerCase();
   return e.includes("aprobada") || e.includes("pendiente");
 });
 
+// aviso a la vista padre de que se quiere ver el detalle del espacio
 const onVerEspacio = () => {
   emit("ver-espacio", props.reserva.espacioId);
 };
 
+//  Aviso a la vista padre de que se quiere cancelar esta reserva
 const onCancelar = () => {
   emit("cancelar", props.reserva.id);
 };
