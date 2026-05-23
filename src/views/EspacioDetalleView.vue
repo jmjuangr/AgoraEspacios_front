@@ -110,19 +110,23 @@ const espaciosStore = useEspaciosStore();
 const route = useRoute();
 const router = useRouter();
 
+// Obtener id espacio desde url
 const espacioId = computed(() => Number(route.params.id));
+//validez id
 const idValido = computed(() => !Number.isNaN(espacioId.value));
 
 const cargandoEspacio = ref(false);
 const errorEspacio = ref("");
+// Buscar espacio mismo id
 const espacio = computed(() =>
-  espaciosStore.espacios.find((e) => e.id === espacioId.value)
+  espaciosStore.espacios.find((e) => e.id === espacioId.value),
 );
 
 const espacioNoEncontrado = computed(
-  () => idValido.value && !cargandoEspacio.value && !espacio.value
+  () => idValido.value && !cargandoEspacio.value && !espacio.value,
 );
 
+// Cuando se entro en pantalla de detalle de un espacio se compruebo si ya thay espacios cargados, si no hay, cargar antes ded  mostrar detalle
 onMounted(async () => {
   if (!espaciosStore.espacios.length) {
     cargandoEspacio.value = true;
@@ -135,10 +139,12 @@ onMounted(async () => {
   }
 });
 
+// Vuelve al listado general de espacios
 const volver = () => {
   router.push({ name: "espacios" });
 };
 
+// Acceso reservas del usuario
 const irMisReservas = () => {
   router.push({ name: "mis-reservas" });
 };

@@ -202,14 +202,14 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="editDialog" max-width="520">
+    <v-dialog v-model="dialogoEditar" max-width="520">
       <v-card class="ag-card reserva-edit-dialog">
         <v-card-title>Editar reserva</v-card-title>
 
         <v-card-text>
           <v-form @submit.prevent="guardarEdicion">
             <v-text-field
-              v-model="editForm.fechaInicio"
+              v-model="formularioEditar.fechaInicio"
               label="Fecha inicio"
               type="datetime-local"
               variant="outlined"
@@ -219,7 +219,7 @@
             />
 
             <v-text-field
-              v-model="editForm.fechaFin"
+              v-model="formularioEditar.fechaFin"
               label="Fecha fin"
               type="datetime-local"
               variant="outlined"
@@ -229,7 +229,7 @@
             />
 
             <v-text-field
-              v-model="editForm.titulo"
+              v-model="formularioEditar.titulo"
               label="Titulo"
               variant="outlined"
               density="comfortable"
@@ -259,7 +259,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { useEspaciosStore } from "../store/espacios";
 
-type ReservaTablaItem = {
+type ReservaTabla = {
   id: number;
   espacioId: number;
   espacioNombre: string;
@@ -273,8 +273,9 @@ type ReservaTablaItem = {
 };
 
 const espaciosStore = useEspaciosStore();
-const editDialog = ref(false);
+const dialogoEditar = ref(false);
 
+// Filtros reservas
 const filtros = reactive({
   usuario: null as string | null,
   espacioId: null as number | null,
@@ -283,7 +284,8 @@ const filtros = reactive({
   fechaFin: "",
 });
 
-const editForm = reactive({
+// formulario para editar una reserva
+const formularioEditar = reactive({
   id: null as number | null,
   fechaInicio: "",
   fechaFin: "",
@@ -304,7 +306,8 @@ const headers = [
   { title: "Acciones", value: "acciones", sortable: false },
 ];
 
-const reservasTabla = computed<ReservaTablaItem[]>(() =>
+// Normalizar
+const reservasTabla = computed<ReservaTabla[]>(() =>
   espaciosStore.reservasAdmin.map((r: any) => {
     const espacioId = r.espacioId ?? r.EspacioId ?? 0;
     const usuarioId = r.usuarioId ?? r.UsuarioId ?? 0;
@@ -333,9 +336,10 @@ const reservasTabla = computed<ReservaTablaItem[]>(() =>
       fechaCreacion: r.fechaCreacion ?? r.FechaCreacion ?? "",
       estado: r.estado ?? r.Estado ?? "",
     };
-  })
+  }),
 );
 
+// Lista de estados
 const estadosOptions = computed(() => {
   const estados = new Set<string>();
 
@@ -348,6 +352,7 @@ const estadosOptions = computed(() => {
   return Array.from(estados).sort((a, b) => a.localeCompare(b));
 });
 
+// reservas filtradas
 const reservasFiltradas = computed(() =>
   reservasTabla.value.filter((reserva) => {
     const usuarioFiltro = (filtros.usuario ?? "").trim().toLowerCase();
@@ -383,7 +388,7 @@ const reservasFiltradas = computed(() =>
       coincideFechaInicio &&
       coincideFechaFin
     );
-  })
+  }),
 );
 
 const hayFiltrosActivos = computed(
@@ -392,7 +397,7 @@ const hayFiltrosActivos = computed(
     filtros.espacioId !== null ||
     (filtros.estado ?? "").trim().length > 0 ||
     filtros.fechaInicio.length > 0 ||
-    filtros.fechaFin.length > 0
+    filtros.fechaFin.length > 0,
 );
 
 function extraerFecha(valor: string): string {
@@ -436,42 +441,42 @@ async function recargar() {
   await espaciosStore.cargarReservasAdmin();
 }
 
-function estaPendiente(item: ReservaTablaItem): boolean {
+function estaPendiente(item: ReservaTabla): boolean {
   return item.estado.toLowerCase() === "pendiente";
 }
 
-function sePuedeEditar(item: ReservaTablaItem): boolean {
+function sePuedeEditar(item: ReservaTabla): boolean {
   const estado = item.estado.toLowerCase();
   return estado === "pendiente" || estado === "aprobada";
 }
 
-function sePuedeCancelar(item: ReservaTablaItem): boolean {
+function sePuedeCancelar(item: ReservaTabla): boolean {
   return item.estado.toLowerCase() === "aprobada";
 }
 
-function abrirEditar(item: ReservaTablaItem) {
-  editForm.id = item.id;
-  editForm.fechaInicio = toDatetimeLocal(item.fechaInicio);
-  editForm.fechaFin = toDatetimeLocal(item.fechaFin);
-  editForm.titulo = item.titulo;
-  editDialog.value = true;
+function abrirEditar(item: ReservaTabla) {
+  formularioEditar.id = item.id;
+  formularioEditar.fechaInicio = toDatetimeLocal(item.fechaInicio);
+  formularioEditar.fechaFin = toDatetimeLocal(item.fechaFin);
+  formularioEditar.titulo = item.titulo;
+  dialogoEditar.value = true;
 }
 
 function cerrarEditar() {
-  editDialog.value = false;
-  editForm.id = null;
-  editForm.fechaInicio = "";
-  editForm.fechaFin = "";
-  editForm.titulo = "";
+  dialogoEditar.value = false;
+  formularioEditar.id = null;
+  formularioEditar.fechaInicio = "";
+  formularioEditar.fechaFin = "";
+  formularioEditar.titulo = "";
 }
 
 async function guardarEdicion() {
-  if (!editForm.id || !editForm.fechaInicio || !editForm.fechaFin) return;
+  if (!formularioEditar.id || !formularioEditar.fechaInicio || !formularioEditar.fechaFin) return;
 
-  await espaciosStore.actualizarReservaAdmin(editForm.id, {
-    fechaInicio: editForm.fechaInicio,
-    fechaFin: editForm.fechaFin,
-    titulo: editForm.titulo.trim() || undefined,
+  await espaciosStore.actualizarReservaAdmin(formularioEditar.id, {
+    fechaInicio: formularioEditar.fechaInicio,
+    fechaFin: formularioEditar.fechaFin,
+    titulo: formularioEditar.titulo.trim() || undefined,
   });
 
   if (!espaciosStore.error) {
@@ -479,16 +484,19 @@ async function guardarEdicion() {
   }
 }
 
+// Aprobar reserva
 async function aprobar(id: number) {
   if (!confirm("Seguro que quieres aprobar esta reserva?")) return;
   await espaciosStore.aprobarReservaAdmin(id);
 }
 
+// Rechazar reserva
 async function rechazar(id: number) {
   if (!confirm("Seguro que quieres rechazar esta reserva?")) return;
   await espaciosStore.rechazarReservaAdmin(id);
 }
 
+// Cancelar reserva
 async function cancelar(id: number) {
   if (!confirm("Seguro que quieres cancelar esta reserva?")) return;
   await espaciosStore.cancelarReservaAdmin(id);

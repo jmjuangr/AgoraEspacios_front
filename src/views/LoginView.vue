@@ -80,6 +80,7 @@ const isValid = ref(false);
 const formRef = ref();
 
 // Validaciones
+
 const emailRules = [
   (v: string) => !!v || "El email es obligatorio",
   (v: string) => /.+@.+\..+/.test(v) || "Email inválido",
@@ -88,6 +89,7 @@ const emailRules = [
 const passwordRules = [(v: string) => !!v || "La contraseña es obligatoria"];
 
 // Enviar formulario
+
 const onSubmit = async () => {
   errorMessage.value = null;
 

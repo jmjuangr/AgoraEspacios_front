@@ -9,16 +9,17 @@ import i18n from "./i18n";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
-// Importamos los iconos opcionales (recomendado)
+// iconos
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
 
-// Estilos base del proyecto
+//Estilos base
 import "./assets/base.css";
 import "./assets/main.css";
 import "./assets/styles/_variables.scss";
 import "./assets/styles/_mixins.scss";
 
+//conf vuetify
 const vuetify = createVuetify({
   icons: {
     defaultSet: "mdi",

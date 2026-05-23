@@ -37,13 +37,13 @@
             <span>Aforo maximo: {{ espacio.capacidad }}</span>
           </div>
 
-          <p
-            v-if="espacio.descripcion"
-            class="space-card__description"
-          >
+          <p v-if="espacio.descripcion" class="space-card__description">
             {{ espacio.descripcion }}
           </p>
-          <p v-else class="space-card__description space-card__description--empty">
+          <p
+            v-else
+            class="space-card__description space-card__description--empty"
+          >
             Sin descripcion disponible.
           </p>
         </div>
@@ -77,6 +77,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// Tipo local con los datos minimos para la tarjeta de espacio
 interface EspacioCard {
   id: number;
   nombre: string;
@@ -91,17 +92,21 @@ const props = defineProps<{
   espacio: EspacioCard;
 }>();
 
+// eventos que la tarjeta comunica a la vista padre
 const emit = defineEmits<{
   (e: "ver-detalle", id: number): void;
   (e: "reservar", id: number): void;
 }>();
 
+// mostrar o no detalles
 const showDetails = ref(false);
 
+// Abrir/cerrar bloque de informacion adicional
 const toggleDetails = () => {
   showDetails.value = !showDetails.value;
 };
 
+// Aviso a la vista padre de que se quiere reservar este espacio
 const onReservar = () => {
   emit("reservar", props.espacio.id);
 };

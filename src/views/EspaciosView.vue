@@ -137,6 +137,7 @@ import type { EspacioDTO } from "../types/agora";
 const espaciosStore = useEspaciosStore();
 const router = useRouter();
 
+// carga
 onMounted(() => {
   if (!espaciosStore.categorias.length) {
     espaciosStore.cargarCategorias();
@@ -147,12 +148,14 @@ onMounted(() => {
   }
 });
 
+// Objeto con los filtros que escribe el usuario
 const filtros = reactive({
   texto: "",
   categoria: "",
   capacidadMin: null as number | null,
 });
 
+// Tipo con los datos para SpaceCard
 type EspacioCardData = {
   id: number;
   nombre: string;
@@ -164,6 +167,7 @@ type EspacioCardData = {
   accesible?: boolean;
 };
 
+// obtener nombre categoria espacios
 const getCategoriaNombre = (e: EspacioDTO) => {
   if (e.categoriaNombre?.trim()) {
     return e.categoriaNombre;
@@ -176,14 +180,16 @@ const getCategoriaNombre = (e: EspacioDTO) => {
   return categoria?.nombre || "Sin categoría";
 };
 
+// lista de categorias que aparecen en el select de filtros
 const categoriasOptions = computed(() => {
-  const valores = new Set<string>();
+  const valores = new Set<string>(); //evita duplicados
   espaciosStore.espacios.forEach((e) => {
     valores.add(getCategoriaNombre(e));
   });
   return Array.from(valores).sort((a, b) => a.localeCompare(b));
 });
 
+// devolver los espacios que cumplen los filtros
 const espaciosFiltrados = computed(() => {
   const texto = filtros.texto.trim().toLowerCase();
   const categoria = filtros.categoria.trim();
@@ -214,6 +220,7 @@ const espaciosFiltrados = computed(() => {
   });
 });
 
+// conversion de los espacios filtrados a formato SpaceCard
 const espaciosParaCards = computed<EspacioCardData[]>(() =>
   espaciosFiltrados.value.map((e: EspacioDTO) => ({
     id: e.id,
@@ -227,6 +234,7 @@ const espaciosParaCards = computed<EspacioCardData[]>(() =>
   })),
 );
 
+// btonn limpiar
 const hayFiltrosActivos = computed(
   () =>
     filtros.texto.trim().length > 0 ||
@@ -234,6 +242,7 @@ const hayFiltrosActivos = computed(
     (filtros.capacidadMin ?? 0) > 0,
 );
 
+// limpiar
 const limpiarFiltros = () => {
   filtros.texto = "";
   filtros.categoria = "";
@@ -248,6 +257,7 @@ const handleVerDetalle = (id: number) => {
   router.push({ name: "espacioDetalle", params: { id } });
 };
 
+// ir a pantalla de detalle del espacio
 const handleReservar = (id: number) => {
   router.push({ name: "espacioDetalle", params: { id } });
 };

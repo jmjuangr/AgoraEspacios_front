@@ -1,12 +1,12 @@
 @import './_variables.scss';
 
-// Mixin genérico de elevación
+// mixin reutilizable, añade sombra y border a los elementos. Sensación de elevacion
 @mixin ag-elevation($shadow: $shadow-soft, $border-color: $color-border) {
   box-shadow: $shadow;
   border: 1px solid $border-color;
 }
 
-// Mixin de tarjeta principal (para v-card o div.ag-card)
+// tarjeta principal
 @mixin ag-card($padding: $spacing-5) {
   background-color: $color-surface-soft;
   border-radius: $radius-lg;
@@ -16,7 +16,7 @@
   color: $color-heading;
 }
 
-// Mixin de sección de página (para contenedores grandes)
+// mixin para las secciones grandes dentro de un página, es decir, en las cabeceras, zon de filtros, partes principales...
 @mixin ag-section($gap: $spacing-6) {
   margin-bottom: $spacing-8;
   padding: $spacing-5;
@@ -29,12 +29,12 @@
   gap: $gap;
 }
 
-// Mixin para separar las vistas principales del header fijo
+// mixin creado para dejar espacio superior y  que no haya contenidos que se queden tapadso por el header
 @mixin ag-page-container {
   margin-top: $spacing-10 + $spacing-2;
 }
 
-// Mixin para el header de tarjeta/sección
+// mixin para la cabecera de un tarjeta o seccion: titulos, subtitulos, acciones, etc
 @mixin ag-card-header {
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@
   }
 }
 
-// Mixin de botón primario (usable en .ag-btn-primary)
+// botones principales
 @mixin ag-button-primary {
   display: inline-flex;
   align-items: center;
@@ -76,12 +76,12 @@
 
   &:hover {
     background-color: $color-primary-strong;
-    transform: translateY(-1px);
+    transform: translateY(-1px); // Esto sirve para que al pasar el ratón  haga un poco de efecto de subir
     box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
   }
 
-  &:active {
-    transform: translateY(0);
+  &:active { 
+    transform: translateY(0); // Esto lo devuleve a su posición original
     box-shadow: 0 4px 15px rgba(15, 23, 42, 0.7);
   }
 
@@ -92,7 +92,7 @@
   }
 }
 
-// Mixin de botón secundario (contorno moderno)
+// botones secundarios. Se añade borde
 @mixin ag-button-secondary {
   display: inline-flex;
   align-items: center;
@@ -101,23 +101,23 @@
   border-radius: $radius-pill;
   cursor: pointer;
   background: transparent;
-  color: $color-text;
-  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: $color-heading;
+  border: 1px solid rgba(148, 163, 184, 0.5); // borde suave alrededor de los botones
   font-size: 0.9rem;
   transition:
     background-color $transition-fast,
     color $transition-fast,
     border-color $transition-fast;
 
-  color: $color-heading;
+  
 
   ::v-deep(.v-btn__content) {
-    color: $color-heading !important;
+    color: $color-heading !important; // Esto es para asegurar que el texto del botón va a usar el de la variable y no el de Vuetify por defecto
   }
 
   ::v-deep(.v-icon) {
-    color: $color-heading !important;
-    opacity: 1 !important;
+    color: $color-heading !important; // Asegura que los iconos usen el color de la variable y no el de Vuetify por defecto
+    opacity: 1 !important; // Evita qtransparencia de iconos
   }
 
   &:hover {
@@ -127,7 +127,7 @@
   }
 }
 
-// Mixin de badge/etiqueta (estado o categoría)
+// mixin para las etiquetas de estados y categorias
 @mixin ag-badge($bg: rgba(37, 99, 235, 0.18), $color: $color-primary-soft) {
   display: inline-flex;
   align-items: center;
@@ -154,7 +154,7 @@
   }
 }
 
-// Mixin para inputs (puede usarse en contenedores alrededor de v-text-field si estilamos envoltorios).
+// mixin para cointenedores de campos de formulario
 @mixin ag-input-shell {
   border-radius: $radius-md;
   border: 1px solid $color-border;
@@ -172,7 +172,7 @@
   }
 }
 
-// Mixin para layout de calendario/reservas (contenedores más amplios)
+// Mixin para caledndario
 @mixin ag-calendar-container {
   @include ag-section($spacing-4);
   padding: $spacing-4;
@@ -180,14 +180,14 @@
   overflow: hidden;
 }
 
-// Utilidad para texto monoespaciado (por ejemplo, IDs de reserva)
+// mixin que se usa para textos de códigos o ids
 @mixin ag-code-text {
   font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   font-size: 0.8rem;
   letter-spacing: 0.03em;
 }
 
-// Mixin específico para formularios de autenticación (login / register)
+// mixin específico para formularios de login y registro
 @mixin ag-auth-fields {
  
   ::v-deep(.v-field) {

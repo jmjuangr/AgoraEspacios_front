@@ -1,6 +1,6 @@
-/* Paleta base personalizada para AgoraEspacios */
+/* colores generales base para el proyecto */
 
-/* Colores de bajo nivel */
+/* variables de color base que se reutilizan en la aplicación*/
 :root {
   --vt-c-white: #f9fafb;
   --vt-c-white-soft: #f3f4f6;
@@ -23,7 +23,7 @@
   --vt-c-text-dark-2: #cbd5e1;
 }
 
-/* Variables semanticas del proyecto (tema oscuro uniforme) */
+/* variables principales de AgoraEspacios: tema oscuro */
 :root {
   --color-background: #020617;
   --color-background-soft: #0b1120;
@@ -57,7 +57,7 @@
   --ag-card-field-border: rgba(148, 163, 184, 0.55);
 }
 
-/* Reset basico + tipografia */
+/* Reset basico de estilos princiipales y la fuente */
 *,
 *::before,
 *::after {
@@ -91,6 +91,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Estilos de la barra de scroll */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.7) transparent;

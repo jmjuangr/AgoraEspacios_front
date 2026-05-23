@@ -1,17 +1,20 @@
 // src/types/agora.ts
 
-// ---------- AUTENTICACIÓN ----------
+//AUTENTICACIÓN
+// Datos iniciar sesion
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
+// Datos  cuenta nueva
 export interface RegisterRequest {
   nombre: string;
   email: string;
   password: string;
 }
 
+// Respuesta  cuando login o registro ok
 export interface AuthResponse {
   usuarioId: number;
   nombre: string;
@@ -21,7 +24,8 @@ export interface AuthResponse {
   expiresAt: string;
 }
 
-// ---------- USUARIOS (para Admin) ----------
+// USUARIOS (Admin)
+
 export interface UsuarioDTO {
   id: number;
   nombre: string;
@@ -29,7 +33,8 @@ export interface UsuarioDTO {
   rol: string;
 }
 
-// ---------- CATEGORÍAS DE ESPACIO ----------
+// CATEGORÍAS DE ESPACIO
+
 export interface CategoriaEspacioDTO {
   id: number;
   nombre: string;
@@ -47,7 +52,8 @@ export interface CategoriaEspacioUpdateDTO {
   descripcion?: string;
 }
 
-// ---------- ESPACIOS ----------
+//  ESPACIOS
+
 export interface EspacioDTO {
   id: number;
   nombre: string;
@@ -68,11 +74,13 @@ export interface EspacioCreateDTO {
   imagenUrl?: string;
 }
 
+// Al actualizar se reutilizan los campos de creacion y se anade el id
 export interface EspacioUpdateDTO extends EspacioCreateDTO {
   id: number;
 }
 
-// ---------- RESERVAS ----------
+//  RESERVAS
+
 export interface ReservaDTO {
   id: number;
   espacioId: number;

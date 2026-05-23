@@ -1,5 +1,6 @@
 import { createI18n } from "vue-i18n";
 
+// textos traducidos
 const messages = {
   es: {
     appName: "AgoraEspacios",
@@ -39,6 +40,7 @@ const messages = {
   },
 };
 
+// Configuracion de i18n Se usa español por defecto y tambien como idioma de fallback
 const i18n = createI18n({
   legacy: false,
   locale: "es",

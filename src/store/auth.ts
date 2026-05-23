@@ -8,21 +8,25 @@ import type {
 } from "../types/agora";
 
 export const useAuthStore = defineStore("auth", {
+  // datos del usuario autenticado
   state: () => ({
     usuarioId: null as number | null,
     nombre: "" as string,
     email: "" as string,
-    rol: "" as string, // "Admin" | "User" | ""
+    rol: "" as string, // admin o user
     token: "" as string,
     expiresAt: "" as string,
   }),
 
   getters: {
+    // si hay token esta autenticado
     isAuthenticated: (state) => !!state.token,
+    // comprobacion rol de amdmin
     isAdmin: (state) => state.rol === "Admin",
   },
 
   actions: {
+    // Recuperar datos de sesion al recargar la pagina para no perder el login
     cargarDesdeLocalStorage() {
       const token = localStorage.getItem("agora_token");
       const rol = localStorage.getItem("agora_rol");
@@ -39,20 +43,23 @@ export const useAuthStore = defineStore("auth", {
       if (expiresAt) this.expiresAt = expiresAt;
     },
 
+    // se envia email y password al backend y guarda la sesion si el login es ok
     async login(payload: LoginRequest) {
       const data = await apiSend<AuthResponse>("/auth/login", "POST", payload);
       this._guardarSesion(data);
     },
 
+    //  envio los datos de registro al backend y se guarda la sesión del nuevo usuario
     async register(payload: RegisterRequest) {
       const data = await apiSend<AuthResponse>(
         "/auth/register",
         "POST",
-        payload
+        payload,
       );
       this._guardarSesion(data);
     },
 
+    // metodo para centralizar como se guarda una sesion en Pinia y localStorage
     _guardarSesion(data: AuthResponse) {
       this.usuarioId = data.usuarioId;
       this.nombre = data.nombre;
@@ -69,6 +76,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.setItem("agora_expiresAt", String(data.expiresAt));
     },
 
+    // Cirre de sesion se limpia el estado de Pinia y localStorage
     logout() {
       this.usuarioId = null;
       this.nombre = "";

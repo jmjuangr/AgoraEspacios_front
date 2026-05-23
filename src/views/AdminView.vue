@@ -6,7 +6,7 @@
         Administración de AgoraEspacios
       </v-card-title>
 
-      <!-- Subtítulo / ayuda -->
+      <!-- Subtítulo  -->
       <v-card-subtitle class="mb-4">
         Gestiona categorías y espacios. La gestión global de reservas está
         disponible en la vista Reservas.
@@ -22,7 +22,7 @@
         {{ espaciosStore.error }}
       </v-alert>
 
-      <!-- Selector de pestañas -->
+      <!-- Selector pestañas -->
       <v-tabs v-model="tab" class="mb-4" grow>
         <v-tab value="categorias">Categorías</v-tab>
         <v-tab value="espacios">Espacios</v-tab>
@@ -74,7 +74,7 @@
             </v-form>
           </v-col>
 
-          <!-- Tabla de categorías -->
+          <!-- Tabla de categorias -->
           <v-col cols="12" md="8">
             <h3 class="text-subtitle-1 mb-2">Listado de categorías</h3>
 
@@ -264,13 +264,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useEspaciosStore } from "../store/espacios";
-
+// Store de Pinia se cargan y gestionan categorias y espacios
 const espaciosStore = useEspaciosStore();
 
 // pestaña activa
 const tab = ref<"categorias" | "espacios">("categorias");
 
-// ---------- CATEGORÍAS ----------
+//  CATEGORIAS
+// Campos  categorias
 const categoriaEditId = ref<number | null>(null);
 const categoriaNombre = ref("");
 const categoriaDescripcion = ref("");
@@ -281,7 +282,7 @@ onMounted(async () => {
   await espaciosStore.cargarEspacios();
 });
 
-// Crear / actualizar categoría
+//Guardar categoria
 const guardarCategoria = async () => {
   if (!categoriaNombre.value.trim()) return;
 
@@ -300,7 +301,7 @@ const guardarCategoria = async () => {
   resetCategoriaForm();
 };
 
-// Rellenar formulario para edición
+//editar categoria
 const editarCategoria = (cat: any) => {
   categoriaEditId.value = cat.id;
   categoriaNombre.value = cat.nombre;
@@ -320,7 +321,8 @@ const resetCategoriaForm = () => {
   categoriaDescripcion.value = "";
 };
 
-// ---------- ESPACIOS ----------
+//ESPACIOS
+
 const espacioEditId = ref<number | null>(null);
 const espacioNombre = ref("");
 const espacioCategoriaId = ref<number | null>(null);
@@ -329,7 +331,8 @@ const espacioUbicacion = ref("");
 const espacioDescripcion = ref("");
 const espacioImagenUrl = ref("");
 
-// Crear / actualizar espacio
+// Crear o actualizar espacio
+
 const guardarEspacio = async () => {
   if (
     !espacioNombre.value.trim() ||
@@ -358,7 +361,7 @@ const guardarEspacio = async () => {
   resetEspacioForm();
 };
 
-// Rellenar formulario para edición
+//Editar espacio
 const editarEspacio = (esp: any) => {
   espacioEditId.value = esp.id;
   espacioNombre.value = esp.nombre;
@@ -376,6 +379,7 @@ const borrarEspacio = async (id: number) => {
 };
 
 // Reset formulario espacio
+
 const resetEspacioForm = () => {
   espacioEditId.value = null;
   espacioNombre.value = "";

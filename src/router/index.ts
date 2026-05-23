@@ -12,7 +12,9 @@ import EspaciosView from "../views/EspaciosView.vue";
 import EspacioDetalleView from "../views/EspacioDetalleView.vue";
 
 const router = createRouter({
+  // rutas /
   history: createWebHistory(),
+  // paginas de la aplicación y permisos
   routes: [
     { path: "/", name: "home", component: HomeView },
     { path: "/login", name: "login", component: LoginView },
@@ -50,20 +52,25 @@ const router = createRouter({
   ],
 });
 
+// guard que se ejecuta antes de entrar en cualquier ruta
 router.beforeEach((to, _from, next) => {
   const auth = useAuthStore();
 
+  // cargar desde localStorage por si rerefrsca pagina
   if (!auth.token) {
     auth.cargarDesdeLocalStorage();
   }
 
+  // leo los permisos definidos en meta para saber si la ruta necesita login o ser admin
   const requiresAuth = (to.meta as any).requiresAuth;
   const requiresAdmin = (to.meta as any).requiresAdmin;
 
+  // si la ruta necesita login y el usuario no esta autenticado lo mando al login.
   if (requiresAuth && !auth.isAuthenticated) {
     return next({ name: "login" });
   }
 
+  // Si la ruta necesita ser admin y el usuario no lo es lo mando al inicio
   if (requiresAdmin && !auth.isAdmin) {
     return next({ name: "home" });
   }

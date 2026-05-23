@@ -75,17 +75,20 @@ import { useRouter } from "vue-router";
 const auth = useAuthStore();
 const router = useRouter();
 
+// Campos formulario
 const nombre = ref("");
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const errorMsg = ref("");
 
+// comprueba si coinciden contraseñas
 const password2Error = computed<boolean>(
   () =>
-    !!(password.value && password2.value && password.value !== password2.value)
+    !!(password.value && password2.value && password.value !== password2.value),
 );
 
+// Envia el registro al backend
 const handleRegister = async () => {
   errorMsg.value = "";
 
@@ -97,7 +100,7 @@ const handleRegister = async () => {
       email: email.value,
       password: password.value,
     });
-
+    //redirige segun rol user
     if (auth.isAdmin) router.push("/admin");
     else router.push("/espacios");
   } catch (err: any) {
