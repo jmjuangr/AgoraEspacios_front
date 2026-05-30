@@ -2,7 +2,11 @@
   <v-app-bar density="comfortable" class="ag-header" flat theme="dark">
     <div class="ag-header__brand" @click="goHome">
       <div class="ag-header__logo">
-        <v-icon size="22">mdi-city-variant-outline</v-icon>
+        <img
+          :src="agoraLogo"
+          alt="AgoraEspacios"
+          class="ag-header__logo-img"
+        />
       </div>
       <div class="ag-header__titles">
         <span class="ag-header__app-name">{{ $t("appName") }}</span>
@@ -96,6 +100,7 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth";
+import agoraLogo from "@/assets/agora-espacios-icon.svg";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -152,14 +157,23 @@ const handleLogout = () => {
 }
 
 .ag-header__logo {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $color-primary-strong;
-  box-shadow: 0 0 0 1px $color-border;
+  background-color: #f8fafc;
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.45),
+    0 8px 18px rgba(2, 6, 23, 0.28);
+}
+
+.ag-header__logo-img {
+  width: 30px;
+  height: 30px;
+  display: block;
+  object-fit: contain;
 }
 
 .ag-header__titles {
