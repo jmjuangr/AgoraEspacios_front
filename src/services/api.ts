@@ -16,6 +16,48 @@ function getAuthHeaders(): HeadersInit {
 
   return {};
 }
+//traducción de mensajes del backend
+function traducirMensajeValidacion(mensaje: string): string {
+  if (
+    mensaje.includes("The field Password") &&
+    mensaje.includes("minimum length")
+  ) {
+    return "La contraseña debe tener al menos 6 carácteres.";
+  }
+
+  return mensaje;
+}
+//obtner mensaje de error a partir de respuesta de la Api
+function obtenerMensajeError(
+  text: string,
+  status: number,
+  method: string,
+  url: string,
+) {
+  if (!text) {
+    return `Error ${status} en ${method} ${url}`;
+  }
+
+  try {
+    const data = JSON.parse(text);
+
+    if (data.errors && typeof data.errors === "object") {
+      const mensajes = Object.values(data.errors)
+        .flat()
+        .filter((mensaje): mensaje is string => typeof mensaje === "string")
+        .map(traducirMensajeValidacion);
+
+      if (mensajes.length) return mensajes.join(" ");
+    }
+
+    if (typeof data.title === "string") return data.title;
+    if (typeof data.message === "string") return data.message;
+  } catch {
+    // Si no es JSON. se muestra el texto normal que devuelva la API
+  }
+
+  return text;
+}
 
 //  GET reutilizable para hacer peticiones a la API.
 // se usa el <T> para indicar tipo de dato esperado en respuesta
@@ -58,7 +100,7 @@ export async function apiSend<T>(
   //gestion de error
   if (!resp.ok) {
     const text = await resp.text();
-    throw new Error(text || `Error ${resp.status} en ${method} ${url}`);
+    throw new Error(obtenerMensajeError(text, resp.status, method, url));
   }
 
   const contentType = resp.headers.get("Content-Type") || "";

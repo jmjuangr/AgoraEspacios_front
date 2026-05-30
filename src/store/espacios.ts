@@ -2,6 +2,8 @@
 import { defineStore } from "pinia";
 import { apiGet, apiSend } from "../services/api";
 import type {
+  UsuarioDTO,
+  UsuarioUpdateDTO,
   CategoriaEspacioDTO,
   CategoriaEspacioCreateDTO,
   CategoriaEspacioUpdateDTO,
@@ -14,8 +16,9 @@ import type {
 } from "../types/agora";
 
 export const useEspaciosStore = defineStore("espacios", {
-  // datos principales de espacios, categorias y reservas
+  // datos principales de espacios, categorias, reservas y usuarios
   state: () => ({
+    usuarios: [] as UsuarioDTO[],
     categorias: [] as CategoriaEspacioDTO[],
     espacios: [] as EspacioDTO[],
     reservasUsuario: [] as ReservaDTO[],
@@ -30,6 +33,42 @@ export const useEspaciosStore = defineStore("espacios", {
     setError(msg: string) {
       this.error = msg;
       console.error(msg);
+    },
+
+    // USUARIOS
+    // Carga todos los usuarios para admin
+    async cargarUsuarios() {
+      this.cargando = true;
+      this.error = "";
+      try {
+        this.usuarios = await apiGet<UsuarioDTO[]>("/usuario");
+      } catch (err: any) {
+        this.setError(err.message || "Error al cargar usuarios");
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    // Actualiza un usuario que ya existe desde admin
+    async actualizarUsuario(id: number, dto: UsuarioUpdateDTO) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/usuario/${id}`, "PUT", dto);
+        await this.cargarUsuarios();
+      } catch (err: any) {
+        this.setError(err.message || "Error al actualizar usuario");
+      }
+    },
+
+    // borrar usuario y recargar el listado
+    async borrarUsuario(id: number) {
+      this.error = "";
+      try {
+        await apiSend<void>(`/usuario/${id}`, "DELETE");
+        await this.cargarUsuarios();
+      } catch (err: any) {
+        this.setError(err.message || "Error al borrar usuario");
+      }
     },
 
     // CATEGORÍAS

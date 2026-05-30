@@ -8,11 +8,17 @@
           </v-card-title>
 
           <v-card-text>
-            <v-form @submit.prevent="handleRegister">
-              <v-text-field v-model="nombre" label="Nombre" required />
+            <v-form ref="formRef" @submit.prevent="handleRegister">
+              <v-text-field
+                v-model="nombre"
+                :rules="nombreRules"
+                label="Nombre"
+                required
+              />
 
               <v-text-field
                 v-model="email"
+                :rules="emailRules"
                 label="Correo electrónico"
                 type="email"
                 required
@@ -20,6 +26,7 @@
 
               <v-text-field
                 v-model="password"
+                :rules="passwordRules"
                 label="Contraseña"
                 type="password"
                 required
@@ -81,6 +88,20 @@ const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const errorMsg = ref("");
+const formRef = ref();
+
+const nombreRules = [(v: string) => !!v || "El nombre es obligatorio"];
+
+const emailRules = [
+  (v: string) => !!v || "El email es obligatorio",
+  (v: string) => /.+@.+\..+/.test(v) || "Email invalido",
+];
+
+const passwordRules = [
+  (v: string) => !!v || "La contraseña es obligatoria",
+  (v: string) =>
+    v.length >= 6 || "La contraseña debe tener al menos 6 carácteres",
+];
 
 // comprueba si coinciden contraseñas
 const password2Error = computed<boolean>(
@@ -93,6 +114,13 @@ const handleRegister = async () => {
   errorMsg.value = "";
 
   if (password2Error.value) return;
+
+  //lanzar validaciones
+  const form = formRef.value;
+  if (form) {
+    const result = await form.validate();
+    if (!result.valid) return;
+  }
 
   try {
     await auth.register({
