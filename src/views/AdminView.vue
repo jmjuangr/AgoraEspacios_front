@@ -8,8 +8,8 @@
 
       <!-- Subtítulo  -->
       <v-card-subtitle class="mb-4">
-        Gestiona categorías y espacios. La gestión global de reservas está
-        disponible en la vista Reservas.
+        Gestiona categoría,espacios y usuarios. La gestión de reservas está
+        disponible en la vista Reservas
       </v-card-subtitle>
 
       <!-- Mensaje de error general del store -->
@@ -26,6 +26,7 @@
       <v-tabs v-model="tab" class="mb-4" grow>
         <v-tab value="categorias">Categorías</v-tab>
         <v-tab value="espacios">Espacios</v-tab>
+        <v-tab value="usuarios">Usuarios</v-tab>
       </v-tabs>
 
       <v-divider class="mb-4" />
@@ -223,7 +224,7 @@
                 <tr v-for="esp in espaciosStore.espacios" :key="esp.id">
                   <td>{{ esp.id }}</td>
                   <td>{{ esp.nombre }}</td>
-                  <!-- si tienes categoriaNombre en el DTO, úsalo; si no, mostramos el id -->
+                  <!-- si tiene categoriaNombre en el DTO se usa si no se muestra id -->
                   <td>
                     {{ (esp as any).categoriaNombre || esp.categoriaEspacioId }}
                   </td>
@@ -257,6 +258,116 @@
           </v-col>
         </v-row>
       </div>
+
+      <!-- Contenido de usuarios -->
+      <div v-else-if="tab === 'usuarios'">
+        <v-row>
+          <v-col cols="12" md="4">
+            <h3 class="text-subtitle-1 mb-2">
+              {{ usuarioEditId ? "Editar usuario" : "Selecciona un usuario" }}
+            </h3>
+
+            <v-form @submit.prevent="guardarUsuario">
+              <v-text-field
+                v-model="usuarioNombre"
+                label="Nombre"
+                variant="outlined"
+                density="comfortable"
+                class="mb-3"
+                :disabled="!usuarioEditId"
+                required
+              />
+
+              <v-text-field
+                v-model="usuarioEmail"
+                label="Email"
+                type="email"
+                variant="outlined"
+                density="comfortable"
+                class="mb-3"
+                :disabled="!usuarioEditId"
+                required
+              />
+
+              <v-select
+                v-model="usuarioRol"
+                :items="rolesUsuario"
+                label="Rol"
+                variant="outlined"
+                density="comfortable"
+                class="mb-3"
+                :disabled="!usuarioEditId"
+                required
+              />
+
+              <v-btn
+                type="submit"
+                color="primary"
+                class="mr-2"
+                :disabled="!usuarioEditId"
+              >
+                Guardar cambios
+              </v-btn>
+
+              <v-btn
+                v-if="usuarioEditId"
+                type="button"
+                variant="text"
+                @click="resetUsuarioForm"
+              >
+                Cancelar
+              </v-btn>
+            </v-form>
+          </v-col>
+
+          <v-col cols="12" md="8">
+            <h3 class="text-subtitle-1 mb-2">Listado de usuarios</h3>
+
+            <v-table density="compact">
+              <thead>
+                <tr>
+                  <th class="text-left">ID</th>
+                  <th class="text-left">Nombre</th>
+                  <th class="text-left">Email</th>
+                  <th class="text-left">Rol</th>
+                  <th class="text-left">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="usuario in espaciosStore.usuarios" :key="usuario.id">
+                  <td>{{ usuario.id }}</td>
+                  <td>{{ usuario.nombre }}</td>
+                  <td>{{ usuario.email }}</td>
+                  <td>{{ usuario.rol }}</td>
+                  <td>
+                    <v-btn
+                      size="small"
+                      variant="text"
+                      @click="editarUsuario(usuario)"
+                    >
+                      Editar
+                    </v-btn>
+                    <v-btn
+                      size="small"
+                      variant="text"
+                      color="error"
+                      @click="borrarUsuario(usuario.id)"
+                    >
+                      Eliminar
+                    </v-btn>
+                  </td>
+                </tr>
+
+                <tr v-if="!espaciosStore.usuarios.length">
+                  <td colspan="5" class="text-center text-disabled py-4">
+                    No hay usuarios todavia.
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </v-col>
+        </v-row>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -264,11 +375,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useEspaciosStore } from "../store/espacios";
+import type { UsuarioDTO } from "../types/agora";
 // Store de Pinia se cargan y gestionan categorias y espacios
 const espaciosStore = useEspaciosStore();
 
 // pestaña activa
-const tab = ref<"categorias" | "espacios">("categorias");
+const tab = ref<"categorias" | "espacios" | "usuarios">("categorias");
 
 //  CATEGORIAS
 // Campos  categorias
@@ -280,6 +392,7 @@ const categoriaDescripcion = ref("");
 onMounted(async () => {
   await espaciosStore.cargarCategorias();
   await espaciosStore.cargarEspacios();
+  await espaciosStore.cargarUsuarios();
 });
 
 //Guardar categoria
@@ -388,6 +501,53 @@ const resetEspacioForm = () => {
   espacioUbicacion.value = "";
   espacioDescripcion.value = "";
   espacioImagenUrl.value = "";
+};
+
+// USUARIOS
+
+const rolesUsuario = ["User", "Admin"];
+const usuarioEditId = ref<number | null>(null);
+const usuarioNombre = ref("");
+const usuarioEmail = ref("");
+const usuarioRol = ref("User");
+
+const guardarUsuario = async () => {
+  if (
+    !usuarioEditId.value ||
+    !usuarioNombre.value.trim() ||
+    !usuarioEmail.value.trim() ||
+    !usuarioRol.value
+  ) {
+    return;
+  }
+
+  await espaciosStore.actualizarUsuario(usuarioEditId.value, {
+    nombre: usuarioNombre.value.trim(),
+    email: usuarioEmail.value.trim(),
+    rol: usuarioRol.value,
+  });
+
+  resetUsuarioForm();
+};
+
+const editarUsuario = (usuario: UsuarioDTO) => {
+  usuarioEditId.value = usuario.id;
+  usuarioNombre.value = usuario.nombre;
+  usuarioEmail.value = usuario.email;
+  usuarioRol.value = usuario.rol;
+};
+
+const borrarUsuario = async (id: number) => {
+  if (!confirm("Seguro que quieres eliminar este usuario?")) return;
+  await espaciosStore.borrarUsuario(id);
+  if (usuarioEditId.value === id) resetUsuarioForm();
+};
+
+const resetUsuarioForm = () => {
+  usuarioEditId.value = null;
+  usuarioNombre.value = "";
+  usuarioEmail.value = "";
+  usuarioRol.value = "User";
 };
 </script>
 

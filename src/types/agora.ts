@@ -33,6 +33,12 @@ export interface UsuarioDTO {
   rol: string;
 }
 
+export interface UsuarioUpdateDTO {
+  nombre: string;
+  email: string;
+  rol: string;
+}
+
 // CATEGORÍAS DE ESPACIO
 
 export interface CategoriaEspacioDTO {

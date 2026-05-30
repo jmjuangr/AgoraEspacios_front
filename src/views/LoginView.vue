@@ -80,22 +80,28 @@ const isValid = ref(false);
 const formRef = ref();
 
 // Validaciones
-
+//email
 const emailRules = [
   (v: string) => !!v || "El email es obligatorio",
   (v: string) => /.+@.+\..+/.test(v) || "Email inválido",
 ];
-
-const passwordRules = [(v: string) => !!v || "La contraseña es obligatoria"];
+//pass
+const passwordRules = [
+  (v: string) => !!v || "La contraseña es obligatoria",
+  (v: string) =>
+    v.length >= 6 || "La contraseña debe tener al menos 6 carácteres",
+];
 
 // Enviar formulario
 
 const onSubmit = async () => {
   errorMessage.value = null;
 
+  //lanzar validaciones
   const form = formRef.value;
-  if (form && !(await form.validate())) {
-    return;
+  if (form) {
+    const result = await form.validate();
+    if (!result.valid) return;
   }
 
   loading.value = true;
