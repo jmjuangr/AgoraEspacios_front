@@ -7,6 +7,27 @@ import type {
   RegisterRequest,
 } from "../types/agora";
 
+const STORAGE_KEYS = [
+  "agora_token",
+  "agora_rol",
+  "agora_nombre",
+  "agora_email",
+  "agora_usuarioId",
+  "agora_expiresAt",
+];
+
+function sesionExpirada(expiresAt: string): boolean {
+  if (!expiresAt) return true;
+
+  const expiresAtTime = new Date(expiresAt).getTime();
+
+  return Number.isNaN(expiresAtTime) || expiresAtTime <= Date.now();
+}
+
+function limpiarLocalStorageSesion() {
+  STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+}
+
 export const useAuthStore = defineStore("auth", {
   // datos del usuario autenticado
   state: () => ({
@@ -20,9 +41,13 @@ export const useAuthStore = defineStore("auth", {
 
   getters: {
     // si hay token esta autenticado
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: (state) =>
+      !!state.token && !sesionExpirada(state.expiresAt),
     // comprobacion rol de amdmin
-    isAdmin: (state) => state.rol === "Admin",
+    isAdmin: (state) =>
+      !!state.token &&
+      !sesionExpirada(state.expiresAt) &&
+      state.rol === "Admin",
   },
 
   actions: {
@@ -34,6 +59,13 @@ export const useAuthStore = defineStore("auth", {
       const email = localStorage.getItem("agora_email");
       const usuarioId = localStorage.getItem("agora_usuarioId");
       const expiresAt = localStorage.getItem("agora_expiresAt");
+
+      //Si en el localStorage queda una session antigua o incompleta se elimina
+
+      if (!token || !expiresAt || sesionExpirada(expiresAt)) {
+        this.logout();
+        return;
+      }
 
       if (token) this.token = token;
       if (rol) this.rol = rol;
@@ -85,12 +117,7 @@ export const useAuthStore = defineStore("auth", {
       this.token = "";
       this.expiresAt = "";
 
-      localStorage.removeItem("agora_token");
-      localStorage.removeItem("agora_rol");
-      localStorage.removeItem("agora_nombre");
-      localStorage.removeItem("agora_email");
-      localStorage.removeItem("agora_usuarioId");
-      localStorage.removeItem("agora_expiresAt");
+      limpiarLocalStorageSesion();
     },
   },
 });
