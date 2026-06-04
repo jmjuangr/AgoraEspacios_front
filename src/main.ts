@@ -3,7 +3,6 @@ import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
-import i18n from "./i18n";
 
 // Vuetify
 import "vuetify/styles";
@@ -16,8 +15,6 @@ import "@mdi/font/css/materialdesignicons.css";
 //Estilos base
 import "./assets/base.css";
 import "./assets/main.css";
-import "./assets/styles/_variables.scss";
-import "./assets/styles/_mixins.scss";
 
 //conf vuetify
 const vuetify = createVuetify({
@@ -27,13 +24,19 @@ const vuetify = createVuetify({
     sets: { mdi },
   },
   theme: {
-    defaultTheme: "light",
+    defaultTheme: "agoraDark",
     themes: {
-      light: {
+      agoraDark: {
+        dark: true,
         colors: {
           primary: "#2563EB",
           secondary: "#06B6D4",
-          background: "#F3F4F6",
+          background: "#020617",
+          surface: "#0B1120",
+          error: "#EF4444",
+          warning: "#EAB308",
+          success: "#22C55E",
+          info: "#38BDF8",
         },
       },
     },
@@ -45,6 +48,5 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
-app.use(i18n);
 
 app.mount("#app");

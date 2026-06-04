@@ -2,14 +2,10 @@
   <v-app-bar density="comfortable" class="ag-header" flat theme="dark">
     <div class="ag-header__brand" @click="goHome">
       <div class="ag-header__logo">
-        <img
-          :src="agoraLogo"
-          alt="AgoraEspacios"
-          class="ag-header__logo-img"
-        />
+        <img :src="agoraLogo" alt="AgoraEspacios" class="ag-header__logo-img" />
       </div>
       <div class="ag-header__titles">
-        <span class="ag-header__app-name">{{ $t("appName") }}</span>
+        <span class="ag-header__app-name">AgoraEspacios</span>
         <span class="ag-header__app-subtitle">
           Gestión de espacios públicos
         </span>
@@ -26,10 +22,9 @@
           'ag-header__nav-btn',
           { 'ag-header__nav-btn--active': isActiveRoute('/espacios') },
         ]"
-        color="grey-lighten-4"
         @click="goTo('/espacios')"
       >
-        {{ $t("header.espacios") }}
+        Espacios
       </v-btn>
 
       <v-btn
@@ -38,10 +33,9 @@
           'ag-header__nav-btn',
           { 'ag-header__nav-btn--active': isActiveRoute('/mis-reservas') },
         ]"
-        color="grey-lighten-4"
         @click="goTo('/mis-reservas')"
       >
-        {{ $t("header.misReservas") }}
+        Mis reservas
       </v-btn>
 
       <v-btn
@@ -52,10 +46,9 @@
           'ag-header__nav-btn--admin',
           { 'ag-header__nav-btn--active': isActiveRoute('/admin') },
         ]"
-        color="cyan-lighten-2"
         @click="goTo('/admin')"
       >
-        {{ $t("header.admin") }}
+        Admin
       </v-btn>
 
       <v-btn
@@ -66,10 +59,9 @@
           'ag-header__nav-btn--admin',
           { 'ag-header__nav-btn--active': isActiveRoute('/reservas') },
         ]"
-        color="cyan-lighten-2"
         @click="goTo('/reservas')"
       >
-        {{ $t("header.reservas") }}
+        Reservas
       </v-btn>
     </div>
 
@@ -90,7 +82,7 @@
         size="small"
         @click="handleLogout"
       >
-        {{ $t("header.logout") }}
+        Cerrar sesión
       </v-btn>
     </div>
   </v-app-bar>
@@ -143,12 +135,19 @@ const handleLogout = () => {
   border-bottom: 1px solid $color-border;
   padding-inline: $spacing-4;
   box-shadow: 0 4px 14px rgba(2, 6, 23, 0.35);
+
+  :deep(.v-toolbar__content) {
+    min-width: 0;
+    gap: $spacing-2;
+  }
 }
 
 .ag-header__brand {
   display: flex;
   align-items: center;
   gap: $spacing-2;
+  flex: 0 0 auto;
+  min-width: 0;
   cursor: pointer;
 
   & .v-icon {
@@ -163,7 +162,7 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: $color-white;
   box-shadow:
     0 0 0 1px rgba(148, 163, 184, 0.45),
     0 8px 18px rgba(2, 6, 23, 0.28);
@@ -179,26 +178,35 @@ const handleLogout = () => {
 .ag-header__titles {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .ag-header__app-name {
   font-size: 1rem;
   font-weight: 600;
-  color: #f8fafc;
+  color: $color-white;
+  white-space: nowrap;
 }
 
 .ag-header__app-subtitle {
   font-size: 0.75rem;
-  color: #cbd5e1;
+  color: $color-text;
+  white-space: nowrap;
 }
 
 .ag-header__nav {
   display: flex;
   align-items: center;
   gap: $spacing-2;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
 .ag-header__nav-btn {
+  flex: 0 0 auto;
   text-transform: none;
   font-size: 0.9rem;
   border-radius: $radius-pill;
@@ -217,6 +225,7 @@ const handleLogout = () => {
   :deep(.v-btn__content) {
     font-weight: 500;
     letter-spacing: 0.01em;
+    color: $color-heading;
   }
 
   &--admin {
@@ -228,12 +237,18 @@ const handleLogout = () => {
       background-color: rgba(6, 182, 212, 0.18);
       border-color: rgba(6, 182, 212, 0.35);
     }
+
+    :deep(.v-btn__content) {
+      color: $color-secondary-soft;
+    }
   }
 }
 
 .ag-header__right {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .ag-header__user {
@@ -264,5 +279,61 @@ const handleLogout = () => {
 
 .ag-btn-secondary {
   @include ag-button-secondary;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .ag-header {
+    padding-inline: $spacing-3;
+  }
+
+  .ag-header__nav {
+    gap: $spacing-1;
+  }
+
+  .ag-header__nav-btn {
+    font-size: 0.85rem;
+    padding-inline: $spacing-2;
+  }
+
+  .ag-header__user-name {
+    max-width: 110px;
+  }
+}
+
+@media (max-width: 700px) {
+  .ag-header {
+    padding-inline: $spacing-2;
+  }
+
+  .ag-header__app-subtitle,
+  .ag-header__user {
+    display: none;
+  }
+
+  .ag-header__nav-btn {
+    font-size: 0.8rem;
+    min-height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ag-header__logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ag-header__logo-img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .ag-header__app-name {
+    font-size: 0.9rem;
+  }
+
+  .ag-btn-secondary {
+    padding-inline: $spacing-2;
+  }
 }
 </style>

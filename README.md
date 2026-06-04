@@ -1,5 +1,44 @@
-# Vue 3 + TypeScript + Vite
+# AgoraEspacios Frontend
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Frontend de AgoraEspacios, una aplicacion para consultar espacios disponibles y gestionar reservas. Esta parte del proyecto esta hecha con Vue 3, TypeScript, Vite, Pinia, Vue Router y Vuetify.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+La aplicacion permite iniciar sesion, registrarse, ver espacios publicos, consultar el detalle de cada espacio, crear reservas desde un calendario y revisar las reservas propias. Tambien incluye una zona de administracion para gestionar categorias, espacios, usuarios y solicitudes de reserva.
+
+## Estructura principal
+
+- `src/views`: pantallas principales de la aplicacion.
+- `src/components`: componentes reutilizables como tarjetas, cabecera, footer y calendario.
+- `src/store`: stores de Pinia para autenticacion, espacios, usuarios y reservas.
+- `src/services`: funciones comunes para llamar a la API.
+- `src/types`: interfaces TypeScript usadas en el frontend.
+- `src/assets`: estilos globales, variables, mixins e iconos.
+
+## Arrancar el proyecto
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+
+Ejecutar en desarrollo:
+
+```bash
+npm run dev
+```
+
+Generar version de produccion:
+
+```bash
+npm run build
+```
+
+## Configuracion
+
+La URL de la API se puede configurar con la variable:
+
+```env
+VITE_API_BASE_URL=http://localhost:5292/api
+```
+
+Si no se indica, el frontend usa por defecto `http://localhost:5292/api`.

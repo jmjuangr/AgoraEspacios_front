@@ -12,7 +12,7 @@
 a,
 .green {
   text-decoration: none;
-  color: var(--color-accent);
+  color: var(--color-secondary);
   transition: 0.2s ease;
   padding: 3px;
   border-radius: 4px;

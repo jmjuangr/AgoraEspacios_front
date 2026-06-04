@@ -16,11 +16,25 @@
   border-top: 1px solid $color-border;
   box-shadow: 0 -4px 14px rgba(2, 6, 23, 0.35);
   min-height: 44px;
+  padding-inline: $spacing-4;
 }
 
 .ag-footer__text {
   color: $color-text;
   font-size: 0.8rem;
   letter-spacing: 0.02em;
+  text-align: center;
+  white-space: normal;
+}
+
+@media (max-width: 600px) {
+  .ag-footer {
+    min-height: 40px;
+    padding-inline: $spacing-2;
+  }
+
+  .ag-footer__text {
+    font-size: 0.75rem;
+  }
 }
 </style>

@@ -195,14 +195,14 @@ const onReservar = () => {
 .ag-btn-primary {
   @include ag-button-primary;
 
-  color: #fff !important;
+  color: $color-white !important;
 
   ::v-deep(.v-btn__content) {
-    color: #fff !important;
+    color: $color-white !important;
   }
 
   ::v-deep(.v-icon) {
-    color: #fff !important;
+    color: $color-white !important;
   }
 }
 
