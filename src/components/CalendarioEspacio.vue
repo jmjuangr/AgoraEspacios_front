@@ -23,7 +23,12 @@
     </div>
 
     <!-- Alerta  error si hay mensaje de error en store -->
-    <v-alert v-if="errorReservas" type="error" density="comfortable" class="mb-2">
+    <v-alert
+      v-if="errorReservas"
+      type="error"
+      density="comfortable"
+      class="mb-2"
+    >
       {{ errorReservas }}
     </v-alert>
 
@@ -202,7 +207,12 @@
         </v-btn>
 
         <!-- errror del formulario -->
-        <v-alert v-if="errorFormulario" type="error" class="mt-3" density="compact">
+        <v-alert
+          v-if="errorFormulario"
+          type="error"
+          class="mt-3"
+          density="compact"
+        >
           {{ errorFormulario }}
         </v-alert>
         <!-- mensaje de confirmación -->
@@ -593,7 +603,8 @@ async function crearReserva() {
     );
 
   if (conflicto) {
-    errorFormulario.value = "Ese tramo ya esta ocupado. Selecciona otro horario.";
+    errorFormulario.value =
+      "Ese tramo ya esta ocupado. Selecciona otro horario.";
     return;
   }
 

@@ -1,6 +1,6 @@
 @import './_variables.scss';
 
-// mixin reutilizable, añade sombra y border a los elementos. Sensación de elevacion
+// mixin reutilizable, añade sombra y border a los elementos
 @mixin ag-elevation($shadow: $shadow-soft, $border-color: $color-border) {
   box-shadow: $shadow;
   border: 1px solid $border-color;
@@ -64,7 +64,7 @@
   border: none;
   cursor: pointer;
   background-color: $color-primary;
-  color: #f9fafb;
+  color: $color-white;
   font-weight: 500;
   font-size: 0.95rem;
   transition:

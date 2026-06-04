@@ -14,13 +14,13 @@
 
   --vt-c-divider-light-1: rgba(148, 163, 184, 0.7);
   --vt-c-divider-light-2: rgba(148, 163, 184, 0.35);
-  --vt-c-divider-dark-1: rgba(59, 130, 246, 0.7);
+  --vt-c-divider-dark-1: rgba(148, 163, 184, 0.75);
   --vt-c-divider-dark-2: rgba(148, 163, 184, 0.45);
 
   --vt-c-text-light-1: #0f172a;
   --vt-c-text-light-2: rgba(15, 23, 42, 0.7);
   --vt-c-text-dark-1: #f1f5f9;
-  --vt-c-text-dark-2: #cbd5e1;
+  --vt-c-text-dark-2: #e2e8f0;
 }
 
 /* variables principales de AgoraEspacios: tema oscuro */
@@ -30,31 +30,36 @@
   --color-background-mute: #111827;
 
   --color-surface: #0b1120;
-  --color-surface-muted: #111827;
+  --color-surface-soft: #111827;
+  --color-surface-muted: #1f2937;
 
   --color-border: var(--vt-c-divider-dark-2);
   --color-border-hover: var(--vt-c-divider-dark-1);
 
   --color-heading: var(--vt-c-text-dark-1);
   --color-text: var(--vt-c-text-dark-2);
+  --color-text-muted: #94a3b8;
 
   --color-primary: #2563eb;
   --color-primary-soft: #dbeafe;
   --color-primary-strong: #1d4ed8;
 
-  --color-accent: #06b6d4;
-  --color-accent-soft: #cffafe;
+  --color-secondary: #06b6d4;
+  --color-secondary-soft: #cffafe;
+  --color-accent: var(--color-secondary);
+  --color-accent-soft: var(--color-secondary-soft);
 
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-error: #dc2626;
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-error: #ef4444;
+  --color-info: #38bdf8;
 
   --section-gap: 160px;
 
   --ag-card-text: #f1f5f9;
-  --ag-card-text-muted: #cbd5e1;
-  --ag-card-field-bg: #0f172a;
-  --ag-card-field-border: rgba(148, 163, 184, 0.55);
+  --ag-card-text-muted: #94a3b8;
+  --ag-card-field-bg: #111827;
+  --ag-card-field-border: rgba(148, 163, 184, 0.45);
 }
 
 /* Reset basico de estilos princiipales y la fuente */

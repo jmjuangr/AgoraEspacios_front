@@ -1,13 +1,15 @@
 // Todas las variables de diseño del proyecto 
 
 // Colores base
-// Estos colores se utilizan en vistas, componentes y en los propios mixins
+// colores que se utilizan en vistas componentes y en los mixins
 $color-primary: #2563eb;
 $color-primary-soft: #dbeafe;
 $color-primary-strong: #1d4ed8;
 
 $color-secondary: #06b6d4;
 $color-secondary-soft: #cffafe;
+
+$color-white: #f9fafb;
 
 $color-background: #020617;
 $color-background-soft: #0b1120;
@@ -25,7 +27,7 @@ $color-text: #e2e8f0;
 $color-text-muted: #94a3b8;
 
 // Estados
-// Colores para estados de reservas, avisos y mensajes, etc.
+// Colores para estados de reservas, avisos y mensajes...
 $color-success: #22c55e;
 $color-warning: #eab308;
 $color-error: #ef4444;
