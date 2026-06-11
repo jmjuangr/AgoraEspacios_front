@@ -25,6 +25,16 @@
               />
 
               <v-text-field
+                v-model="nif"
+                :rules="nifRules"
+                label="NIF"
+                maxlength="9"
+                counter="9"
+                required
+                @blur="nif = normalizarNif(nif)"
+              />
+
+              <v-text-field
                 v-model="password"
                 :rules="passwordRules"
                 label="Contraseña"
@@ -85,6 +95,7 @@ const router = useRouter();
 // Campos formulario
 const nombre = ref("");
 const email = ref("");
+const nif = ref("");
 const password = ref("");
 const password2 = ref("");
 const errorMsg = ref("");
@@ -95,6 +106,17 @@ const nombreRules = [(v: string) => !!v || "El nombre es obligatorio"];
 const emailRules = [
   (v: string) => !!v || "El email es obligatorio",
   (v: string) => /.+@.+\..+/.test(v) || "Email invalido",
+];
+
+const normalizarNif = (value: string) =>
+  value.replace(/\s+/g, "").toUpperCase();
+
+// validacion  nif
+const nifRules = [
+  (v: string) => !!v || "El NIF es obligatorio",
+  (v: string) =>
+    normalizarNif(v).length === 9 ||
+    "El NIF debe tener exactamente 9 caracteres",
 ];
 
 const passwordRules = [
@@ -123,9 +145,12 @@ const handleRegister = async () => {
   }
 
   try {
+    const nifNormalizado = normalizarNif(nif.value);
+
     await auth.register({
-      nombre: nombre.value,
-      email: email.value,
+      nombre: nombre.value.trim(),
+      email: email.value.trim(),
+      nif: nifNormalizado,
       password: password.value,
     });
     //redirige segun rol user

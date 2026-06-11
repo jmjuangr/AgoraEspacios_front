@@ -11,6 +11,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
   nombre: string;
   email: string;
+  nif: string;
   password: string;
 }
 
@@ -19,6 +20,7 @@ export interface AuthResponse {
   usuarioId: number;
   nombre: string;
   email: string;
+  nif: string;
   rol: string; // "Admin" | "User"
   token: string;
   expiresAt: string;
@@ -30,12 +32,22 @@ export interface UsuarioDTO {
   id: number;
   nombre: string;
   email: string;
+  nif: string;
+  rol: string;
+}
+
+export interface UsuarioCreateDTO {
+  nombre: string;
+  email: string;
+  nif: string;
+  password: string;
   rol: string;
 }
 
 export interface UsuarioUpdateDTO {
   nombre: string;
   email: string;
+  nif: string;
   rol: string;
 }
 

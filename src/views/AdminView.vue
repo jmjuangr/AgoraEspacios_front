@@ -249,7 +249,7 @@
                 </tr>
 
                 <tr v-if="!espaciosStore.espacios.length">
-                  <td colspan="5" class="text-center text-disabled py-4">
+                  <td colspan="6" class="text-center text-disabled py-4">
                     No hay espacios todavía.
                   </td>
                 </tr>
@@ -287,6 +287,21 @@
                 class="mb-3"
                 :disabled="!usuarioEditId"
                 required
+              />
+
+              <v-text-field
+                v-model="usuarioNif"
+                label="NIF"
+                maxlength="9"
+                counter="9"
+                variant="outlined"
+                density="comfortable"
+                class="mb-3"
+                :disabled="!usuarioEditId"
+                :error="!!usuarioNifError"
+                :error-messages="usuarioNifError"
+                required
+                @blur="usuarioNif = normalizarNif(usuarioNif)"
               />
 
               <v-select
@@ -329,6 +344,7 @@
                   <th class="text-left">ID</th>
                   <th class="text-left">Nombre</th>
                   <th class="text-left">Email</th>
+                  <th class="text-left">NIF</th>
                   <th class="text-left">Rol</th>
                   <th class="text-left">Acciones</th>
                 </tr>
@@ -338,6 +354,7 @@
                   <td>{{ usuario.id }}</td>
                   <td>{{ usuario.nombre }}</td>
                   <td>{{ usuario.email }}</td>
+                  <td>{{ usuario.nif }}</td>
                   <td>{{ usuario.rol }}</td>
                   <td>
                     <v-btn
@@ -509,13 +526,25 @@ const rolesUsuario = ["User", "Admin"];
 const usuarioEditId = ref<number | null>(null);
 const usuarioNombre = ref("");
 const usuarioEmail = ref("");
+const usuarioNif = ref("");
+const usuarioNifError = ref("");
 const usuarioRol = ref("User");
 
+const normalizarNif = (value: string) => value.replace(/\s+/g, "").toUpperCase();
+
 const guardarUsuario = async () => {
+  const nifNormalizado = normalizarNif(usuarioNif.value);
+  usuarioNif.value = nifNormalizado;
+  usuarioNifError.value =
+    nifNormalizado.length === 9
+      ? ""
+      : "El NIF debe tener exactamente 9 caracteres";
+
   if (
     !usuarioEditId.value ||
     !usuarioNombre.value.trim() ||
     !usuarioEmail.value.trim() ||
+    !!usuarioNifError.value ||
     !usuarioRol.value
   ) {
     return;
@@ -524,6 +553,7 @@ const guardarUsuario = async () => {
   await espaciosStore.actualizarUsuario(usuarioEditId.value, {
     nombre: usuarioNombre.value.trim(),
     email: usuarioEmail.value.trim(),
+    nif: nifNormalizado,
     rol: usuarioRol.value,
   });
 
@@ -534,6 +564,8 @@ const editarUsuario = (usuario: UsuarioDTO) => {
   usuarioEditId.value = usuario.id;
   usuarioNombre.value = usuario.nombre;
   usuarioEmail.value = usuario.email;
+  usuarioNif.value = usuario.nif;
+  usuarioNifError.value = "";
   usuarioRol.value = usuario.rol;
 };
 
@@ -547,6 +579,8 @@ const resetUsuarioForm = () => {
   usuarioEditId.value = null;
   usuarioNombre.value = "";
   usuarioEmail.value = "";
+  usuarioNif.value = "";
+  usuarioNifError.value = "";
   usuarioRol.value = "User";
 };
 </script>

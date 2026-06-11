@@ -12,6 +12,7 @@ const STORAGE_KEYS = [
   "agora_rol",
   "agora_nombre",
   "agora_email",
+  "agora_nif",
   "agora_usuarioId",
   "agora_expiresAt",
 ];
@@ -34,6 +35,7 @@ export const useAuthStore = defineStore("auth", {
     usuarioId: null as number | null,
     nombre: "" as string,
     email: "" as string,
+    nif: "" as string,
     rol: "" as string, // admin o user
     token: "" as string,
     expiresAt: "" as string,
@@ -57,6 +59,7 @@ export const useAuthStore = defineStore("auth", {
       const rol = localStorage.getItem("agora_rol");
       const nombre = localStorage.getItem("agora_nombre");
       const email = localStorage.getItem("agora_email");
+      const nif = localStorage.getItem("agora_nif");
       const usuarioId = localStorage.getItem("agora_usuarioId");
       const expiresAt = localStorage.getItem("agora_expiresAt");
 
@@ -71,6 +74,7 @@ export const useAuthStore = defineStore("auth", {
       if (rol) this.rol = rol;
       if (nombre) this.nombre = nombre;
       if (email) this.email = email;
+      if (nif) this.nif = nif;
       if (usuarioId) this.usuarioId = Number(usuarioId);
       if (expiresAt) this.expiresAt = expiresAt;
     },
@@ -96,6 +100,7 @@ export const useAuthStore = defineStore("auth", {
       this.usuarioId = data.usuarioId;
       this.nombre = data.nombre;
       this.email = data.email;
+      this.nif = data.nif;
       this.rol = data.rol;
       this.token = data.token;
       this.expiresAt = data.expiresAt;
@@ -104,6 +109,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.setItem("agora_rol", data.rol);
       localStorage.setItem("agora_nombre", data.nombre);
       localStorage.setItem("agora_email", data.email);
+      localStorage.setItem("agora_nif", data.nif);
       localStorage.setItem("agora_usuarioId", String(data.usuarioId));
       localStorage.setItem("agora_expiresAt", String(data.expiresAt));
     },
@@ -113,6 +119,7 @@ export const useAuthStore = defineStore("auth", {
       this.usuarioId = null;
       this.nombre = "";
       this.email = "";
+      this.nif = "";
       this.rol = "";
       this.token = "";
       this.expiresAt = "";
