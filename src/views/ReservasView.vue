@@ -297,6 +297,7 @@ const error = computed(() => espaciosStore.error);
 const espaciosOptions = computed(() => espaciosStore.espacios);
 
 const headers = [
+  { title: "ID reserva", value: "id" },
   { title: "Usuario", value: "usuario" },
   { title: "Espacio", value: "espacio" },
   { title: "Titulo", value: "titulo" },
